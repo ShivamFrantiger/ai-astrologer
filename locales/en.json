@@ -1,0 +1,440 @@
+
+{
+  "nav": {
+    "Homepage": "Homepage",
+    "Horoscope": "Horoscope",
+    "Astrology Services": "Astrology Services",
+    "About Us": "About Us",
+    "Contact": "Contact"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Signup",
+    "logout": "Logout"
+  },
+  "userMenu": {
+    "language": "Language"
+  },
+  "authForm": {
+    "title": "Your Astro",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "nameLabel": "Name",
+    "namePlaceholder": "Evelyn Reed",
+    "emailLabel": "Email",
+    "emailPlaceholder": "evelyn.reed@example.com",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "passwordLabel": "Password",
+    "signInButton": "Sign In",
+    "createAccountButton": "Create Account",
+    "orContinueWith": "Or continue with",
+    "googleSignIn": "Sign in with Google"
+  },
+  "verifyOtp": {
+    "title": "Verify Your Email",
+    "subtitle": "Enter the 6-digit code sent to your email.",
+    "label": "One-Time Password",
+    "placeholder": "123456",
+    "button": "Verify Account",
+    "emailNotFound": "Email not found. Please sign up again."
+  },
+  "homepage": {
+    "hero": {
+      "title": "Unlock the Secrets of Your Stars",
+      "subtitle1": "Discover your unique cosmic blueprint and navigate life's challenges with ancient wisdom.",
+      "subtitle2": "Personalized guidance, anytime, anywhere.",
+      "button1": "Consult Now",
+      "button2": "Check Free Horoscope"
+    },
+    "features": [
+      {
+        "title": "Your Astrologer",
+        "desc": "Connect and experience celestial guide.",
+        "icon": "/svg/user.svg"
+      },
+      {
+        "title": "Accurate Predictions",
+        "desc": "Receive precise insights tailored to your birth chart.",
+        "icon": "/svg/star.svg"
+      },
+      {
+        "title": "Secure & Confidential",
+        "desc": "Your personal data and readings are always protected.",
+        "icon": "/svg/shield-check.svg"
+      }
+    ],
+    "services": {
+      "title": "Our Astrology Services",
+      "buttonText": "Chat Now",
+      "items": [
+        {
+          "title": "Talk to Astrologer",
+          "desc": "Instant chat with astrologer for guidance.",
+          "icon": "/svg/message-circle.svg"
+        },
+        {
+          "title": "Horoscope Readings",
+          "desc": "Daily, weekly, monthly, and yearly insights for your sign.",
+          "icon": "/svg/book-open.svg"
+        },
+        {
+          "title": "Love Guidance",
+          "desc": "Understand your relationships and find harmonious connections.",
+          "icon": "/svg/heart.svg"
+        },
+        {
+          "title": "Matchmaking",
+          "desc": "Find your perfect partner through cosmic compatibility analysis.",
+          "icon": "/svg/gem.svg"
+        },
+        {
+          "title": "Career & Finance",
+          "desc": "Gain clarity on your professional path and financial destiny.",
+          "icon": "/svg/briefcase.svg"
+        },
+        {
+          "title": "Remedies",
+          "desc": "Effective astrological remedies to overcome life's obstacles.",
+          "icon": "/svg/star.svg"
+        }
+      ]
+    }
+  },
+  "about": {
+    "heroTitle": "Our Mission: Guiding You with the Stars",
+    "sectionTitle": "Why We Created This App",
+    "sectionContent": "JyotiX is an AI-supported platform where you can know about your destiny. JyotiX keeps your chat private because we're here to resolve your personal queries based on your celestial data. JyotiX has been tested by our team on different parameters and gave up to 92% accurate predictions."
+  },
+  "astroServices": {
+    "heroTitle": "Choose the Service that Fits Your Life Path",
+    "sectionTitle": "Explore Our Astrological Services",
+    "services": [
+      {
+        "title": "Chat with Astrologer",
+        "desc": "Get instant, private consultations with expert astrologers right from your device. Real-time guidance on any life query.",
+        "button": "Chat Now",
+        "icon": "/svg/message-circle.svg"
+      },
+      {
+        "title": "Love Guidance",
+        "desc": "Navigate your romantic journey with insights into compatibility, relationship challenges, and future prospects.",
+        "button": "Chat Now",
+        "icon": "/svg/heart.svg"
+      },
+      {
+        "title": "Matchmaking",
+        "desc": "Find your ideal partner with astrological compatibility reports, ensuring harmonious and lasting relationships.",
+        "button": "Chat Now",
+        "icon": "/svg/gem.svg"
+      },
+      {
+        "title": "Horoscope Readings",
+        "desc": "Unlock daily, weekly, monthly, and yearly insights tailored to your zodiac sign. Discover your cosmic potential.",
+        "button": "Chat Now",
+        "icon": "/svg/book-open.svg"
+      },
+      {
+        "title": "Career & Finance",
+        "desc": "Gain clarity on your professional path and financial destiny. Make informed decisions for prosperity and success.",
+        "button": "Chat Now",
+        "icon": "/svg/briefcase.svg"
+      },
+      {
+        "title": "Remedies",
+        "desc": "Effective astrological remedies to overcome life's obstacles.",
+        "button": "Know More",
+        "icon": "/svg/star.svg"
+      }
+    ],
+    "faqTitle": "Frequently Asked Questions",
+    "faqs": [
+      {
+        "q": "What kind of astrology details will I get from this website?",
+        "a": "You’ll receive personalized insights covering love, career, finances, health, personality, and future predictions — all based on your unique birth details."
+      },
+      {
+        "q": "Do I need to enter my exact birth time and place?",
+        "a": "Yes. Accurate date, time, and place of birth are essential for precise readings. Even small differences can significantly change predictions."
+      },
+      {
+        "q": "Is this astrology report generated by humans or AI?",
+        "a": "Reports are generated by advanced AI trained on authentic astrological principles, delivering quick, detailed, and unbiased results.."
+      },
+      {
+        "q": "How accurate are the predictions?",
+        "a": "Accuracy depends on the correctness of the birth details you provide. Our AI system uses time-tested astrological methods to ensure highly reliable insights."
+      },
+      {
+        "q": "Can I get both short-term and long-term predictions?",
+        "a": "Yes. You can choose from daily, monthly, yearly, and even life-long predictions, depending on your needs."
+      },
+      {
+        "q": "Do I need prior knowledge of astrology to understand the report?",
+        "a": "Not at all. Reports are written in clear, beginner-friendly language so anyone can easily understand them."
+      },
+      {
+        "q": "Can I consult with a human astrologer if I need personalized advice?",
+        "a": "Not at the moment. However, our AI delivers predictions with accuracy and depth comparable to top astrologers, and we continue to improve it with each update."
+      },
+      {
+        "q": "How accurate are the AI-generated astrology insights?",
+        "a": "Our AI insights are based on proven astrological principles and advanced data analysis. They’re highly reliable, often matching the quality of expert astrologers, and are continuously refined for greater precision."
+      }
+    ]
+  },
+  "contact": {
+    "form": {
+      "title": "Get in Touch",
+      "namePlaceholder": "Your Name",
+      "emailPlaceholder": "Your Email",
+      "serviceDefault": "-- Please choose a service --",
+      "serviceOptions": [
+        { "value": "horoscope", "label": "Horoscope Reading" },
+        { "value": "love", "label": "Love Guidance" },
+        { "value": "career", "label": "Career & Finance" },
+        { "value": "matchmaking", "label": "Matchmaking" },
+        { "value": "remedies", "label": "Astrological Remedies" }
+      ],
+      "messagePlaceholder": "Tell us how we can help you...",
+      "submitButton": "Send Message",
+      "sending": "Sending...",
+      "status": {
+        "success": "✅ Your message has been sent successfully!",
+        "error": "❌ Something went wrong. Please try again."
+      }
+    },
+    "direct": {
+      "title": "Or Connect Directly",
+      "emailLabel": "Email:",
+      "location": {
+        "title": "Our Location",
+        "comingSoon": "[Map Integration Coming Soon]",
+        "address": "123 Cosmic Way, Celestial City, CA 90210"
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Guiding you through the cosmos on your life path.",
+    "quickLinks": {
+      "title": "Quick Links",
+      "homepage": "Homepage",
+      "horoscope": "Horoscope",
+      "services": "Astrology Services"
+    },
+    "resources": {
+      "title": "Resources",
+      "about": "About Us",
+      "faq": "FAQ"
+    },
+    "contact": {
+      "title": "Have questions or want to book a session?",
+      "link": "Contact Us"
+    },
+    "copyright": "© 2025 Jyotix Astro Inc. All rights reserved.",
+    "toast": {
+      "title": "Join Your Astro Today!",
+      "message": "Unlock personalized horoscopes and exclusive consultations. Your cosmic journey awaits.",
+      "button": "Sign Up Now"
+    },
+    "footerLinks": {
+      "quickLinks": "Quick Links",
+      "resources": "Resources",
+      "legal": "Legal"
+    }
+  },
+  "horoscope": {
+    "title": "Explore Your Cosmic Blueprint",
+    "tabs": ["Daily", "Weekly", "Monthly", "Yearly"],
+    "tabContent": {
+      "daily": "Discover what the stars have in store for you today.",
+      "weekly": "Here’s your outlook for this week.",
+      "monthly": "See your month’s cosmic guidance.",
+      "yearly": "Explore your year ahead in the stars."
+    },
+    "findSign": "Find Your Zodiac Sign",
+    "signs": [
+      {
+        "name": "Aries",
+        "description": "Bold and ambitious, Aries dives headfirst into challenges.",
+        "icon": "/svg/Aries symbol.svg"
+      },
+      {
+        "name": "Taurus",
+        "description": "Strong and dependable, Taurus values stability and comfort.",
+        "icon": "/svg/Taurs symbol.svg"
+      },
+      {
+        "name": "Gemini",
+        "description": "Curious and expressive, Gemini thrives on variety and ideas.",
+        "icon": "/svg/Gemini symbol.svg"
+      },
+      {
+        "name": "Cancer",
+        "description": "Intuitive and caring, Cancer is deeply connected to home.",
+        "icon": "/svg/Cancer symbol.svg"
+      },
+      {
+        "name": "Leo",
+        "description": "Confident and charismatic, Leo loves to shine and inspire.",
+        "icon": "/svg/Leo symbol.svg"
+      },
+      {
+        "name": "Virgo",
+        "description": "Practical and detail-oriented, Virgo values precision.",
+        "icon": "/svg/Virgo symbol.svg"
+      },
+      {
+        "name": "Libra",
+        "description": "Diplomatic and fair-minded, Libra seeks balance and harmony.",
+        "icon": "/svg/Libra symbol.svg"
+      },
+      {
+        "name": "Scorpio",
+        "description": "Passionate and powerful, Scorpio is deeply emotional.",
+        "icon": "/svg/Scorpio symbol.svg"
+      },
+      {
+        "name": "Sagittarius",
+        "description": "Adventurous and optimistic, Sagittarius loves freedom.",
+        "icon": "/svg/Sagittarius symbol.svg"
+      },
+      {
+        "name": "Capricorn",
+        "description": "Disciplined and ambitious, Capricorn strives for success.",
+        "icon": "/svg/Capricon symbol.svg"
+      },
+      {
+        "name": "Aquarius",
+        "description": "Innovative and independent, Aquarius values uniqueness.",
+        "icon": "/svg/Aquarius-symbol.svg"
+      },
+      {
+        "name": "Pisces",
+        "description": "Compassionate and artistic, Pisces is deeply intuitive.",
+        "icon": "/svg/Pisces-symbol.svg"
+      }
+    ],
+    "promo": {
+      "text": "Need deeper insights? Talk to an expert astrologer now!",
+      "button": "Talk to Astrologer for Personal Horoscope",
+      "viewHoroscope": "View Horoscope"
+    }
+  },
+  "command": {
+    "placeholder": "Type a service or search...",
+    "noResults": "No results found.",
+    "services": "Services",
+    "dailyHoroscope": "Daily Horoscope",
+    "astrologyServices": "Astrology Services",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "account": "Account",
+    "profile": "Profile",
+    "billing": "Billing"
+  },
+  "profile": {
+    "dashboardTitle": "User Dashboard",
+    "sidebar": {
+      "profile": "Profile",
+      "horoscope": "Horoscope",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "userCard": {
+      "greeting": "Hi",
+      "fallback": "Cosmo Seeker",
+      "editProfile": "Edit Profile"
+    },
+    "horoscopeCard": {
+      "title": "Your Daily Horoscope",
+      "subtitle": "For {sign}",
+      "content": "Today brings new opportunities for growth and expansion. Embrace your adventurous spirit and explore uncharted territories, both professionally and personally. Communication with loved ones will be harmonious, and a creative project may finally take off. Trust your intuition to guide you through any challenges."
+    },
+    "subscriptionCard": {
+      "title": "Unlock Exclusive Insights!",
+      "subtitle": "Upgrade to Premium for in-depth reports, live astrologer access, and personalized guidance.",
+      "button": "Upgrade Now"
+    },
+    "profileCompletionCard": {
+      "title": "Complete Your Profile",
+      "exploreTitle": "Explore Our Features",
+      "status": "Completion Status",
+      "completeButton": "Complete Your Profile",
+      "exploreButton": "Explore Our Services",
+      "tasks": {
+        "name": "Add your name",
+        "horoscope": "Select your horoscope sign",
+        "service": "Avail a Service",
+        "checkHoroscope": "Check Horoscope"
+      }
+    }
+  },
+  "settings": {
+    "title": "Profile Settings",
+    "description": "Update your personal details here.",
+    "username": {
+      "label": "Username"
+    },
+    "horoscope": {
+      "label": "Horoscope Sign",
+      "placeholder": "Select your sign"
+    },
+    "language": {
+      "label": "Language"
+    },
+    "saveButton": "Save Changes",
+    "toast": {
+      "title": "Success!",
+      "message": "Your profile has been updated successfully."
+    }
+  },
+  "subscription": {
+    "title": "Find Your Cosmic Plan",
+    "description": "Unlock deeper insights and connect with the universe on your terms. Choose the plan that aligns with your journey.",
+    "popular": "Most Popular",
+    "plans": [
+      {
+        "name": "Free",
+        "price": "₹0",
+        "period": "",
+        "amount": 0,
+        "highlight": false,
+        "features": [
+          "Daily Horoscope",
+          "Basic Compatibility",
+          "Limited Access to Articles"
+        ],
+        "buttonText": "Current Plan"
+      },
+      {
+        "name": "Premium",
+        "price": "₹499",
+        "period": "/mo",
+        "amount": 499,
+        "highlight": true,
+        "features": [
+          "Everything in Free, plus:",
+          "In-depth Weekly & Monthly Horoscopes",
+          "Full Compatibility Reports",
+          "Ad-free Experience"
+        ],
+        "buttonText": "Upgrade to Premium"
+      },
+      {
+        "name": "Cosmic",
+        "price": "₹999",
+        "period": "/mo",
+        "amount": 999,
+        "highlight": false,
+        "features": [
+          "Everything in Premium, plus:",
+          "Personalized Video Readings",
+          "Priority Support",
+          "Exclusive Webinars with Experts"
+        ],
+        "buttonText": "Go Cosmic"
+      }
+    ]
+  }
+}
