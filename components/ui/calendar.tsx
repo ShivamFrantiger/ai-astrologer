@@ -1,13 +1,11 @@
-"use client"
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
-import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
-
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({
   className,
@@ -54,21 +52,31 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        LeftNav: ({ className, ...props }: { className?: string }) => (
-          <button {...props} className={cn("flex items-center justify-center p-1", className)}>
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        ),
-        RightNav: ({ className, ...props }: { className?: string }) => (
-          <button {...props} className={cn("flex items-center justify-center p-1", className)}>
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        ),
+        Chevron: ({ orientation, ...props }) => {
+          if (orientation === "left") {
+            return (
+              <button
+                {...props}
+                className={cn("flex items-center justify-center p-1", props.className)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            );
+          }
+          return (
+            <button
+              {...props}
+              className={cn("flex items-center justify-center p-1", props.className)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          );
+        },
       }}
       {...props}
     />
-  )
+  );
 }
-Calendar.displayName = "Calendar"
+Calendar.displayName = "Calendar";
 
-export { Calendar }
+export { Calendar };
