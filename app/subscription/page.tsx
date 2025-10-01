@@ -13,8 +13,47 @@ import { createSubscription } from "@/app/actions/createSubscription";
 
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: RazorpayStatic;
   }
+}
+
+interface RazorpayStatic {
+  new (options: RazorpayOptions): RazorpayInstance;
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  image?: string;
+  handler: (response: RazorpayPaymentResponse) => void;
+  prefill?: Record<string, string>;
+  notes?: Record<string, string>;
+  theme?: { color: string };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+  on: (event: "payment.failed", handler: (response: RazorpayPaymentFailureResponse) => void) => void;
+}
+
+interface RazorpayPaymentResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+}
+
+interface RazorpayPaymentFailureResponse {
+  error: {
+    code: string;
+    description: string;
+    source: string;
+    step: string;
+    reason: string;
+    metadata: Record<string, unknown>;
+  };
 }
 
 export default function SubscriptionPage() {
@@ -111,14 +150,14 @@ export default function SubscriptionPage() {
       return;
     }
 
-    const options = {
+    const options: RazorpayOptions = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_wgFflhVvJqeVtj",
       amount: plan.amount * 100,
       currency: "INR",
       name: "Jyotix-Astro",
       description: `Subscription for ${plan.name}`,
       image: "/png/brandLogo.png",
-      handler: async function () {
+      handler: async (response) => {
         try {
           await createSubscription({
             userId: user.uid,
@@ -130,12 +169,14 @@ export default function SubscriptionPage() {
           router.push("/profile");
         } catch (error) {
           console.error("Failed to create subscription:", error);
-          alert("Payment was successful, but we failed to update your subscription. Please contact support.");
+          alert(
+            "Payment was successful, but we failed to update your subscription. Please contact support."
+          );
         }
       },
       prefill: {
         name: user.displayName || "Test User",
-        email: user.email,
+        email: user.email || "",
         contact: user.phoneNumber || "9999999999",
       },
       notes: {
@@ -149,7 +190,7 @@ export default function SubscriptionPage() {
 
     if (window.Razorpay) {
       const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function (response: any) {
+      rzp.on("payment.failed", (response) => {
         alert(`Payment failed: ${response.error.description}`);
       });
       rzp.open();
@@ -199,7 +240,6 @@ export default function SubscriptionPage() {
             </motion.div>
           </div>
 
-          {/* Grid layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {plans.map((plan, index) => (
               <motion.div
