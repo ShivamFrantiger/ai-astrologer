@@ -12,7 +12,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
