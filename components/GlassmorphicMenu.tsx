@@ -1,10 +1,9 @@
-
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, Variants, easeInOut, easeOut } from "framer-motion";
 import {
   X,
   Home,
@@ -16,8 +15,7 @@ import {
   LogIn,
   UserPlus,
   LogOut,
-  Search,
-  FileText
+  Search
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,23 +37,27 @@ const getInitials = (name: string | null | undefined) => {
   return name.substring(0, 2);
 };
 
-const menuVariants = {
+const menuVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.3, ease: "easeInOut" },
+    transition: { duration: 0.3, ease: easeInOut },
   },
 };
 
-const navListVariants = {
+const navListVariants: Variants = {
   hidden: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 };
 
-const navItemVariants = {
+const navItemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { ease: "easeOut" } },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { ease: easeOut },
+  },
 };
 
 export function GlassmorphicMenu({ setMenuOpen }: GlassmorphicMenuProps) {
@@ -63,7 +65,7 @@ export function GlassmorphicMenu({ setMenuOpen }: GlassmorphicMenuProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const handleSignOut = async () => {
     await auth.signOut();
     setMenuOpen(false);
@@ -164,7 +166,6 @@ export function GlassmorphicMenu({ setMenuOpen }: GlassmorphicMenuProps) {
 
         <motion.div variants={navItemVariants} className="w-full h-px bg-white/20 my-2" />
 
-        {/* --- Language & Auth --- */}
         {!user ? (
           <>
             <motion.div variants={navItemVariants} className="w-full">
@@ -190,16 +191,16 @@ export function GlassmorphicMenu({ setMenuOpen }: GlassmorphicMenuProps) {
         )}
 
         <motion.div variants={navItemVariants} className="flex items-center gap-2 mt-4">
-            <Languages className="h-5 w-5 text-gray-400" />
-            <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as "en" | "hi" | "ur")}
-                className="bg-transparent text-gray-300 border-none focus:ring-0 text-lg"
-            >
-                <option value="en" className="bg-gray-800 text-white">English</option>
-                <option value="hi" className="bg-gray-800 text-white">Hindi</option>
-                <option value="ur" className="bg-gray-800 text-white">Urdu</option>
-            </select>
+          <Languages className="h-5 w-5 text-gray-400" />
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as "en" | "hi" | "ur")}
+            className="bg-transparent text-gray-300 border-none focus:ring-0 text-lg"
+          >
+            <option value="en" className="bg-gray-800 text-white">English</option>
+            <option value="hi" className="bg-gray-800 text-white">Hindi</option>
+            <option value="ur" className="bg-gray-800 text-white">Urdu</option>
+          </select>
         </motion.div>
       </motion.div>
     </motion.div>
