@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -16,11 +15,20 @@ import {
   sendEmailVerification,
   signInWithPopup,
   GoogleAuthProvider,
-  updateProfile
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }) {
+type FirebaseError = {
+  code?: string;
+  message?: string;
+};
+
+export default function AuthForm({
+  isLoginDefault,
+}: {
+  isLoginDefault: boolean;
+}) {
   const [isLogin, setIsLogin] = useState(isLoginDefault);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +36,7 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const { translations } = useLanguage();
   const t = translations.authForm;
@@ -35,41 +44,45 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
   const handleSignUp = async () => {
     setError(null);
     setLoading(true);
-    if(password.length < 6){
+    if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       setLoading(false);
       return;
     }
     try {
-      // 1. Create the user
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
-      // 2. Update the profile with the display name
-      await updateProfile(user, {
-        displayName: name,
-      });
-
-      // 3. Send the verification email
+      await updateProfile(user, { displayName: name });
       await sendEmailVerification(user);
-      
-      // 4. Redirect to the verification page
       router.push(`/verify-email`);
-
-    } catch (error: any) {
-       switch (error.code) {
-        case 'auth/email-already-in-use':
-          setError('This email address is already in use by another account.');
+    } catch (err) {
+      const errorObj = err as FirebaseError;
+      switch (errorObj.code) {
+        case "auth/email-already-in-use":
+          setError(
+            "This email address is already in use by another account."
+          );
           break;
-        case 'auth/invalid-email':
-          setError('Please enter a valid email address.');
+        case "auth/invalid-email":
+          setError("Please enter a valid email address.");
           break;
-        case 'auth/weak-password':
-          setError('The password is too weak. Please use at least 6 characters.');
+        case "auth/weak-password":
+          setError(
+            "The password is too weak. Please use at least 6 characters."
+          );
           break;
         default:
-          setError('An unexpected error occurred. Please try again.');
-          console.error("Sign-up error:", error);
+          setError(
+            `An unexpected error occurred. ${
+              errorObj.message || "Please try again."
+            }`
+          );
+          console.error("Sign-up error:", errorObj);
       }
     } finally {
       setLoading(false);
@@ -81,13 +94,16 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // The AuthProvider's onAuthStateChanged will handle all redirects
-      // including to the verify-email page if needed.
-    } catch (error: any) {
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+    } catch (err) {
+      const errorObj = err as FirebaseError;
+      if (
+        errorObj.code === "auth/invalid-credential" ||
+        errorObj.code === "auth/wrong-password" ||
+        errorObj.code === "auth/user-not-found"
+      ) {
         setError("Invalid email or password.");
       } else {
-        setError(error.message);
+        setError(errorObj.message || "An unexpected error occurred.");
       }
     } finally {
       setLoading(false);
@@ -100,11 +116,11 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      // The AuthProvider's onAuthStateChanged will handle the redirect.
-    } catch (error: any) {
-      setError(error.message);
+    } catch (err) {
+      const errorObj = err as FirebaseError;
+      setError(errorObj.message || "Google sign-in failed.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -221,16 +237,26 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
                 />
               </div>
 
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              {error && (
+                <p className="text-red-500 text-sm text-center">{error}</p>
+              )}
 
               <CardFooter className="flex flex-col gap-4 w-full mt-4 px-0">
-                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full"
+                >
                   <Button
                     type="submit"
                     className="w-full h-12 bg-[#fec349] text-[#352301] hover:bg-[#4d3b16] rounded-full text-sm sm:text-base hover:cursor-pointer"
                     disabled={loading}
                   >
-                    {loading ? "Processing..." : isLogin ? t.signInButton : t.createAccountButton}
+                    {loading
+                      ? "Processing..."
+                      : isLogin
+                      ? t.signInButton
+                      : t.createAccountButton}
                   </Button>
                 </motion.div>
               </CardFooter>
@@ -246,7 +272,11 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
               <span className="flex-grow border-t border-[#323743]"></span>
             </div>
 
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full"
+            >
               <Button
                 variant="outline"
                 className="w-full h-12 border border-[#4d3b16] text-white rounded-full text-sm sm:text-base hover:cursor-pointer"
@@ -269,5 +299,3 @@ export default function AuthForm({ isLoginDefault }: { isLoginDefault: boolean }
     </div>
   );
 }
-
-    
