@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
     ],
   },
   eslint: {
-    // ✅ This tells Next.js not to fail the build because of ESLint errors
     ignoreDuringBuilds: true,
   },
 };
