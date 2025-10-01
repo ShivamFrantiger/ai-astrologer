@@ -89,8 +89,8 @@ export default function SettingsPage() {
 
         router.push("/profile");
 
-    } catch (error: any) {
-        console.error("Error updating user:", error);
+    } catch (e: unknown) {
+        console.error("Error updating user:", e);
         setIsSaving(false);
     }
   };
