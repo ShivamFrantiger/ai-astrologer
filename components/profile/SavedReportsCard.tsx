@@ -8,7 +8,6 @@ import { Sidebar } from "@/components/profile/Sidebar";
 import { UserCard } from "@/components/profile/UserCard";
 import { DailyHoroscopeCard } from "@/components/profile/DailyHoroscopeCard";
 import { SubscriptionCard } from "@/components/profile/SubscriptionCard";
-import { HistoryCard } from "@/components/profile/HistoryCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -95,7 +94,7 @@ export default function ProfilePage() {
               animate="visible"
               custom={4}
             >
-              <HistoryCard translations={t.historyCard} />
+              
             </motion.div>
           </div>
         </main>
