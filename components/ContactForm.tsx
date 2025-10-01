@@ -5,7 +5,7 @@ import Image from "next/image";
 import TargetCursor from "./targetCursor/TargetCursor";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Link from "next/link";
+
 import Footer from "./Footer";
 
 
