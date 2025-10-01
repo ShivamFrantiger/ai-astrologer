@@ -8,7 +8,6 @@ import Image from "next/image";
 
 export default function Footer() {
   const { translations } = useLanguage();
-  const t = translations.contact;
 
   return (
     <footer className="cursor-target bg-black text-gray-300">
