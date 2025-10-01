@@ -1,7 +1,6 @@
-
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Variants, easeIn, easeOut } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 
@@ -18,24 +17,24 @@ interface HoroscopeModalProps {
   isLoading: boolean;
 }
 
-const backdropVariants = {
+const backdropVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-const modalVariants = {
+const modalVariants: Variants = {
   hidden: { opacity: 0, y: -50, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" },
+    transition: { duration: 0.4, ease: easeOut },
   },
   exit: {
     opacity: 0,
     y: 50,
     scale: 0.95,
-    transition: { duration: 0.3, ease: "easeIn" },
+    transition: { duration: 0.3, ease: easeIn },
   },
 };
 
