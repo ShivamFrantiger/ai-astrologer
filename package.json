@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
@@ -47,7 +47,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.544.0",
     "motion": "^12.23.13",
-    "next": "15.5.9",
+    "next": "^16.0.10",
     "nodemailer": "^7.0.6",
     "react": "^19.0.0",
     "react-day-picker": "^9.11.0",
@@ -70,7 +70,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.0.0",
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "^16.0.10",
     "genkit-cli": "^1.14.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
