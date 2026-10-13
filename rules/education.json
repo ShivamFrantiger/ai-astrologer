@@ -1,0 +1,74 @@
+[
+  {
+    "id": "EDU-001",
+    "topic": "education",
+    "source": "BPHS 5th Lord of Intelligence & Higher Learning, paraphrased",
+    "condition": { "house": 5, "lordInHouse": [1, 5, 9, 10] },
+    "effect": "5th lord shubh sthano me hone se teevra smaran shakti, competitive exams me safalta aur higher degrees ka yog banta hai.",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-002",
+    "topic": "education",
+    "source": "Mercury in 5th or 1st Sharp analytical mind, paraphrased",
+    "condition": { "planet": "Mercury", "inHouse": [1, 5] },
+    "effect": "Budha 1st ya 5th me sharp analytical intellect, coding, mathematics aur linguistics me excellence deta hai.",
+    "weight": 2.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-003",
+    "topic": "education",
+    "source": "Jupiter in 5th Wisdom and Research, paraphrased",
+    "condition": { "planet": "Jupiter", "inHouse": [5, 9] },
+    "effect": "Guru ka 5th ya 9th me hona profound wisdom, scholarly inclination aur guidance/teaching field me shreshtha pradan karta hai.",
+    "weight": 2.4,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-004",
+    "topic": "education",
+    "source": "4th Lord in Dusthana Initial focus challenges, paraphrased",
+    "condition": { "house": 4, "lordInHouse": [6, 8] },
+    "effect": "4th lord 6th ya 8th me hone par shuruwati formal padhai me thoda distraction ho sakta hai, par self-study se overcome ho jata hai.",
+    "weight": -1.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-005",
+    "topic": "education",
+    "source": "Rahu in 5th Technical and out-of-box intellect, paraphrased",
+    "condition": { "planet": "Rahu", "inHouse": [5] },
+    "effect": "Rahu 5th me unconventional subjects, AI, futuristic technologies aur foreign education me ruchi badhata hai.",
+    "weight": 1.5,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "EDU-006",
+    "topic": "education",
+    "source": "Mars in 5th Engineering and Logic, paraphrased",
+    "condition": { "planet": "Mars", "inHouse": [5] },
+    "effect": "Mangal 5th me logic, technical aptitude aur competitive focus deta hai.",
+    "weight": 1.7,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-007",
+    "topic": "education",
+    "source": "Sun in 5th High administrative capability, paraphrased",
+    "condition": { "planet": "Sun", "inHouse": [5] },
+    "effect": "Surya 5th me leadership mindset, civil services ya public administration studies ke liye anukool hai.",
+    "weight": 1.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "EDU-008",
+    "topic": "education",
+    "source": "Aspect of Jupiter on 5th House, paraphrased",
+    "condition": { "aspectOnHouse": 5, "byPlanet": "Jupiter" },
+    "effect": "Guru ki 5th house par drishti vidya me aane wali badhaon ko door karke focus aur retention power badhati hai.",
+    "weight": 2.3,
+    "confidence": "classical"
+  }
+]

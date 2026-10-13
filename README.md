@@ -77,8 +77,9 @@ To get a local copy up and running, follow these simple steps.
 
     # Nodemailer (for contact form)
     EMAIL_USER="xxx"
-    EMAIL_PASS="xxx"
-    EMAIL_TO="xxx"
+    # Prokerala Astrology API (Server-only credentials)
+    PROKERALA_CLIENT_ID="your_prokerala_client_id"
+    PROKERALA_CLIENT_SECRET="your_prokerala_client_secret"
     ```
 
 4.  **Run the development server:**
@@ -88,6 +89,50 @@ To get a local copy up and running, follow these simple steps.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result!
 
+## 🪐 Vedic Kundli Feature Setup & Testing
+
+### 1. Prokerala API Setup
+1. Register a free account at [Prokerala Developer Portal](https://api.prokerala.com/).
+2. Create an App to obtain your `PROKERALA_CLIENT_ID` and `PROKERALA_CLIENT_SECRET`.
+3. The free plan provides 5,000 monthly credits and a 5 requests/min rate limit.
+4. Add credentials to `.env`:
+   ```bash
+   PROKERALA_CLIENT_ID=your_client_id
+   PROKERALA_CLIENT_SECRET=your_client_secret
+   ```
+
+### 3. Conversational AI Chat Flow (/chat)
+The `/chat` route features an intelligent in-chat Vedic astrologer:
+- **Natural Language Intake**: Users can enter details naturally (e.g., *"14 may 2000, shaam 6:32, Jaipur"*). Gemini extracts `{ date, time, place }`, confirms with the user, and generates the chart.
+- **Fallback Inline Card**: Chat also provides an inline form card (`BirthInputCard`) if users prefer direct input.
+- **Traceable Predictions**: Astrological rules are evaluated deterministically in code via `lib/rules/engine.ts`. Gemini cites rules in brackets (e.g. `[BIZ-001]`).
+- **Context Persistence**: Profiles are saved under Firestore (`users/{uid}/kundlis/{id}`). Returning users can switch profiles ("Self", "Wife", "Friend") or create new ones without losing context.
+
+### 4. Adding New Astrology Rules
+Rules are stored as JSON files under `rules/` categorized by topic (`business_career.json`, `marriage.json`, `finance.json`, `education.json`, `health_general.json`).
+
+To add a new rule:
+```json
+{
+  "id": "BIZ-026",
+  "topic": "business_career",
+  "source": "BPHS principle, paraphrased",
+  "condition": { "house": 10, "lordInHouse": [1, 5, 9, 10, 11] },
+  "effect": "Paraphrased explanation of astrological influence in Hindi/English.",
+  "weight": 2.2,
+  "confidence": "classical"
+}
+```
+Supported condition DSL parameters:
+- `house`: Target house (1-12)
+- `lordInHouse`: Allowed placements for the house lord (e.g. `[1, 10, 11]`)
+- `planet`: Specific planet name (`Sun`, `Moon`, `Mars`, `Mercury`, `Jupiter`, `Venus`, `Saturn`, `Rahu`, `Ketu`)
+- `inHouse`: Allowed houses for the planet
+- `aspectOnHouse`: House aspected by `byPlanet` (evaluates authentic Vedic Graha Drishti)
+- `conjunction`: Array of planet names in the same house
+- `dashaLord`: `"current"` + `houseOwned`: Array of houses owned by the active Mahadasha lord
+- `isExalted` / `isDebilitated` / `isRetrograde`: Boolean status
+
 ## ✨ A Personal Touch
 
 This product was built to be more than just code; it's a launchpad for your own cosmic explorations. Feel free to use it, and let it guide you in creating something magical. 
@@ -95,3 +140,4 @@ This product was built to be more than just code; it's a launchpad for your own 
 ## 📜 License & Ownership
 
 This project's source code is provided as a template and is available for you to use only!!!!.The "Jyotix-Astro" name, brand, and logo are for demonstration purposes only. You may not use the "Jyotix-Astro" branding , code in your own derivative commercial or non-commercial projects.
+

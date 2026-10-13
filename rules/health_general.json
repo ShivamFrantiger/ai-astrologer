@@ -1,0 +1,92 @@
+[
+  {
+    "id": "HLT-001",
+    "topic": "health_general",
+    "source": "BPHS Lagna Strength & Vitality, paraphrased",
+    "condition": { "house": 1, "lordInHouse": [1, 5, 9, 10] },
+    "effect": "Lagna lord balwan sthiti me hone se aachi vitality, natural immunity aur fast recovery stamina milta hai.",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-002",
+    "topic": "health_general",
+    "source": "Sun in Kendra Vital energy, paraphrased",
+    "condition": { "planet": "Sun", "inHouse": [1, 10] },
+    "effect": "Surya Arogyakaraka hai; kendra me hone se sharirik tejas, bone health aur prana shakti majboot hoti hai.",
+    "weight": 2.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-003",
+    "topic": "health_general",
+    "source": "Moon in 6th or 8th Mental peace and hydration, paraphrased",
+    "condition": { "planet": "Moon", "inHouse": [6, 8] },
+    "effect": "Chandra dusthana me hone par emotional peace, meditation aur balanced sleep schedule par dhyan dena laabhdayak hai.",
+    "weight": -1.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-004",
+    "topic": "health_general",
+    "source": "Saturn in 6th Overcoming ailments through discipline, paraphrased",
+    "condition": { "planet": "Saturn", "inHouse": [6] },
+    "effect": "Shani 6th me rog-shatru par vijay aur disciplined routine se health maintenance karne me sahayak hota hai.",
+    "weight": 1.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-005",
+    "topic": "health_general",
+    "source": "Mars in 6th Strong resistance, paraphrased",
+    "condition": { "planet": "Mars", "inHouse": [6] },
+    "effect": "Mangal 6th me hone se high physical endurance aur competitive stamina rehta hai.",
+    "weight": 1.9,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-006",
+    "topic": "health_general",
+    "source": "Jupiter Aspect on 1st House Divine protection, paraphrased",
+    "condition": { "aspectOnHouse": 1, "byPlanet": "Jupiter" },
+    "effect": "Guru ki Lagna par drishti samagra swasthya aur mental clarity ki raksha karti hai.",
+    "weight": 2.6,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-007",
+    "topic": "health_general",
+    "source": "Rahu in 6th House Resilient immunity, paraphrased",
+    "condition": { "planet": "Rahu", "inHouse": [6] },
+    "effect": "Rahu 6th me bimariyon se ladne ki adbhut shamta aur competitive resilience deta hai.",
+    "weight": 1.6,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "HLT-008",
+    "topic": "health_general",
+    "source": "6th Lord in 1st House Lifestyle care, paraphrased",
+    "condition": { "house": 6, "lordInHouse": [1] },
+    "effect": "Rogesh Lagna me hone se regular exercise, balanced diet aur preventative checkups maintain rakhna behtar rehta hai.",
+    "weight": -1.1,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-009",
+    "topic": "health_general",
+    "source": "Mercury in 6th Digestive wellness, paraphrased",
+    "condition": { "planet": "Mercury", "inHouse": [6] },
+    "effect": "Budha 6th me gut health aur nervous balance ke liye routine dietary discipline ki aavashyakta darshata hai.",
+    "weight": -0.6,
+    "confidence": "classical"
+  },
+  {
+    "id": "HLT-010",
+    "topic": "health_general",
+    "source": "Venus in 6th Balance in sensory pleasures, paraphrased",
+    "condition": { "planet": "Venus", "inHouse": [6] },
+    "effect": "Shukra 6th me metabolic health ke liye sugar aur processed foods me santulan rakhne ki salah deta hai.",
+    "weight": -0.7,
+    "confidence": "common-practice"
+  }
+]

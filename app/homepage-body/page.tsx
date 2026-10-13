@@ -94,11 +94,14 @@ export default function HeroSection() {
             custom={2}
             className="mt-4 sm:mt-6 md:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4"
           >
-            <a href="https://chat-bot-astrology.vercel.app/chat" onClick={handleRedirect("https://chat-bot-astrology.vercel.app/chat")}>
+            <Link
+              href="/astrology-services?service=chat-with-astrologer"
+              onClick={handleRedirect("/astrology-services?service=chat-with-astrologer")}
+            >
               <button className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full bg-[#FFC247] text-black font-semibold hover:opacity-90 hover:cursor-pointer transition">
                 {t.hero.button1}
               </button>
-            </a>
+            </Link>
             <Link href="/horoscope" onClick={handleRedirect("/horoscope")}>
               <button className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full border-2 border-[#FFC247] bg-black text-[#FFC247] font-semibold hover:bg-[#1a1a1a] hover:cursor-pointer transition">
                 {t.hero.button2}
@@ -149,6 +152,15 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
           {t.services.items.map((service, i) => {
             const isLeft = i % 2 === 0;
+            const serviceKeys = [
+              "chat-with-astrologer",
+              "horoscope-readings",
+              "love-guidance",
+              "matchmaking",
+              "career-finance",
+              "remedies",
+            ];
+            const targetRoute = `/astrology-services?service=${serviceKeys[i] || "chat-with-astrologer"}`;
             return (
               <motion.div
                 key={service.title}
@@ -179,11 +191,11 @@ export default function HeroSection() {
                 <p className="mt-2 sm:mt-4 text-[#f3f4f6b0] text-sm sm:text-base leading-relaxed">
                   {service.desc}
                 </p>
-                <a href="https://chat-bot-astrology.vercel.app/chat" onClick={handleRedirect("https://chat-bot-astrology.vercel.app/chat")}>
+                <Link href={targetRoute} onClick={handleRedirect(targetRoute)}>
                   <button className="mt-4 sm:mt-6 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border-2 border-[#FFC247] bg-[#1e2128] text-[#FFC247] font-semibold hover:bg-[#1a1a1a] hover:cursor-pointer transition">
                     {t.services.buttonText}
                   </button>
-                </a>
+                </Link>
               </motion.div>
             );
           })}

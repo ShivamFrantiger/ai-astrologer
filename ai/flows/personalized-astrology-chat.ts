@@ -9,7 +9,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import type { PersonalizedAstrologyChatInput } from '@/ai/schemas/personalized-astrology-chat';
 import { PersonalizedAstrologyChatInputSchema } from '@/ai/schemas/personalized-astrology-chat';
-import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Subscription } from '@/app/types/subscription';
 
@@ -104,7 +104,17 @@ End with a warm, friendly closing statement.
 Question: {{{question}}}
 Birth Date: {{{birthDate}}}
 Birth Time: {{{birthTime}}}
-Birth Place: {{{birthPlace}}}`,
+Birth Place: {{{birthPlace}}}
+{{#if kundliContext}}
+
+---
+### 🪐 VEDIC KUNDLI CHART CONTEXT:
+{{{kundliContext}}}
+
+**RULES FOR KUNDLI READING:**
+You are a Vedic astrologer. Use ONLY the provided chart data. Never recalculate or invent planetary positions. Answer in Hinglish, concise. If data is missing, say so.
+For career/business questions, highlight 10th house, 7th house, their lords and the running dasha.
+{{/if}}`,
 });
 
 const personalizedAstrologyChatFlow = ai.defineFlow(
@@ -115,29 +125,52 @@ const personalizedAstrologyChatFlow = ai.defineFlow(
   },
   async input => {
     try {
-      const subRef = doc(db, 'subscriptions', input.userId);
-      const subDoc = await getDoc(subRef);
-
-      if (!subDoc.exists()) {
-        return "You do not have an active subscription. Please subscribe to a plan to chat with the astrologer.";
+      // 🪐 Kundli Context Injection: fetch saved chart if not supplied in input
+      if (!input.kundliContext && input.userId) {
+        try {
+          const userKundlisRef = collection(db, 'users', input.userId, 'kundlis');
+          const kundliSnap = await getDocs(query(userKundlisRef, limit(1)));
+          if (!kundliSnap.empty) {
+            const data = kundliSnap.docs[0].data();
+            const { chartSvg, ...rest } = data;
+            input.kundliContext = JSON.stringify(rest, null, 2);
+          }
+        } catch (e) {
+          // Gracefully continue
+        }
       }
-      
-      const subscription = subDoc.data() as Subscription;
 
-      if (new Date(subscription.endDate) < new Date()) {
-        return "Your subscription has expired. Please renew or purchase a new plan to continue.";
-      }
+      // Check subscription (bypass for guest/trial users)
+      const isGuest = !input.userId || input.userId === 'guest' || input.userId.startsWith('guest');
+      let subRef = null;
 
-      if (subscription.tokens <= 0) {
-        return "You have run out of chat tokens for this billing cycle. Please upgrade your plan or wait for the next cycle.";
+      if (!isGuest) {
+        subRef = doc(db, 'subscriptions', input.userId);
+        const subDoc = await getDoc(subRef);
+
+        if (!subDoc.exists()) {
+          return "You do not have an active subscription. Please subscribe to a plan to chat with the astrologer.";
+        }
+        
+        const subscription = subDoc.data() as Subscription;
+
+        if (new Date(subscription.endDate) < new Date()) {
+          return "Your subscription has expired. Please renew or purchase a new plan to continue.";
+        }
+
+        if (subscription.tokens <= 0) {
+          return "You have run out of chat tokens for this billing cycle. Please upgrade your plan or wait for the next cycle.";
+        }
       }
 
       const response = await prompt(input);
       
-      // Deduct a token after a successful response
-      await updateDoc(subRef, {
-        tokens: increment(-1)
-      });
+      // Deduct a token after a successful response for registered subscribed users
+      if (subRef) {
+        await updateDoc(subRef, {
+          tokens: increment(-1)
+        });
+      }
 
       return response.text ?? "I'm sorry, I couldn't generate a response for that. Could you try asking in a different way?";
     } catch (e) {

@@ -1,0 +1,227 @@
+[
+  {
+    "id": "BIZ-001",
+    "topic": "business_career",
+    "source": "BPHS 10th Lord Placement, paraphrased",
+    "condition": { "house": 10, "lordInHouse": [1, 10, 11] },
+    "effect": "10th lord kendra ya trikona me sthit hone se career me leadership, authority aur steady rise ka yog banta hai.",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-002",
+    "topic": "business_career",
+    "source": "Bhavartha Ratnakara 7th House Business Yoga, paraphrased",
+    "condition": { "house": 7, "lordInHouse": [10, 11, 7] },
+    "effect": "7th lord ka 10th ya 11th house se sambandh swatantra vyapar (independent business) aur partnerships me labh deta hai.",
+    "weight": 2.0,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-003",
+    "topic": "business_career",
+    "source": "Classical Budhaditya Yoga principle, paraphrased",
+    "condition": { "conjunction": ["Sun", "Mercury"], "inHouse": [1, 10, 11] },
+    "effect": "Surya aur Budha ka yog (Budhaditya Yoga) buddhimatta, analytical intellect aur administrative roles me safalta deta hai.",
+    "weight": 1.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-004",
+    "topic": "business_career",
+    "source": "Jupiter in Kendra/Trikona principle, paraphrased",
+    "condition": { "planet": "Jupiter", "inHouse": [1, 5, 9, 10] },
+    "effect": "Guru ka kendra ya trikona me hona career me moral reputation, mentorship aur long-term stability pradan karta hai.",
+    "weight": 2.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-005",
+    "topic": "business_career",
+    "source": "Saturn 10th House Karma principle, paraphrased",
+    "condition": { "planet": "Saturn", "inHouse": [10, 11] },
+    "effect": "Shani 10th ya 11th house me hard work, discipline aur 30-36 varsh ke baad mass leadership ya industrial success deta hai.",
+    "weight": 1.9,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-006",
+    "topic": "business_career",
+    "source": "Sun in 10th Digbala principle, paraphrased",
+    "condition": { "planet": "Sun", "inHouse": [10] },
+    "effect": "Surya 10th house me digbali hota hai, jisse government connections, authority aur public recognition milti hai.",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-007",
+    "topic": "business_career",
+    "source": "Mars in 10th Kuldeepak principle, paraphrased",
+    "condition": { "planet": "Mars", "inHouse": [10] },
+    "effect": "Mangal 10th house me hone se high energy, executive decision making aur tech/engineering/real estate me uncha pad milta hai.",
+    "weight": 2.0,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-008",
+    "topic": "business_career",
+    "source": "10th Lord in Dusthana principle, paraphrased",
+    "condition": { "house": 10, "lordInHouse": [6, 8, 12] },
+    "effect": "10th lord dusthana me hone se service roles, foreign business ya occasional professional instability/transfers dekhne ko mil sakte hain.",
+    "weight": -1.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-009",
+    "topic": "business_career",
+    "source": "Mercury in 10th or 11th Vyapar principle, paraphrased",
+    "condition": { "planet": "Mercury", "inHouse": [10, 11] },
+    "effect": "Budha vyapar aur communication ka karaka hai; 10th ya 11th me commercial acumen aur agency/IT business me faayda deta hai.",
+    "weight": 1.7,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "BIZ-010",
+    "topic": "business_career",
+    "source": "Rahu in 10th Modern Business principle, paraphrased",
+    "condition": { "planet": "Rahu", "inHouse": [10] },
+    "effect": "Rahu 10th house me out-of-the-box business ideas, digital/media expansion aur sudden fame pradan kar sakta hai.",
+    "weight": 1.5,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "BIZ-011",
+    "topic": "business_career",
+    "source": "10th Lord Exalted principle, paraphrased",
+    "condition": { "house": 10, "isExalted": true },
+    "effect": "10th lord uccha (exalted) sthiti me hona extraordinary professional growth aur brand value create karta hai.",
+    "weight": 2.6,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-012",
+    "topic": "business_career",
+    "source": "10th Lord Debilitated principle, paraphrased",
+    "condition": { "house": 10, "isDebilitated": true },
+    "effect": "10th lord neecha sthiti me hone par initial career me struggles aur direction clarity pane me samay lagta hai.",
+    "weight": -1.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-013",
+    "topic": "business_career",
+    "source": "Running Dasha Lord owning 10th/11th house, paraphrased",
+    "condition": { "dashaLord": "current", "houseOwned": [10, 11] },
+    "effect": "Chal rahi Mahadasha ka swami 10th ya 11th ka lord hone se yeh samay career promotions aur business launch ke liye behad anukool hai.",
+    "weight": 2.4,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-014",
+    "topic": "business_career",
+    "source": "Running Dasha Lord owning 6th/8th house, paraphrased",
+    "condition": { "dashaLord": "current", "houseOwned": [6, 8] },
+    "effect": "Chal rahi dasha ka lord 6th ya 8th se related ho to naye business me hasty financial risks se bachna chahiye.",
+    "weight": -1.4,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-015",
+    "topic": "business_career",
+    "source": "Aspect of Saturn on 10th House, paraphrased",
+    "condition": { "aspectOnHouse": 10, "byPlanet": "Saturn" },
+    "effect": "Shani ki 10th house par drishti career me patience, discipline aur structured planning ki mang karti hai.",
+    "weight": -0.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-016",
+    "topic": "business_career",
+    "source": "Aspect of Jupiter on 10th House, paraphrased",
+    "condition": { "aspectOnHouse": 10, "byPlanet": "Jupiter" },
+    "effect": "Guru ki 10th house par shubh drishti mushkilon se bachati hai aur professional wisdom badhati hai.",
+    "weight": 2.1,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-017",
+    "topic": "business_career",
+    "source": "Venus in 10th Luxury/Creative principle, paraphrased",
+    "condition": { "planet": "Venus", "inHouse": [10] },
+    "effect": "Shukra 10th me design, arts, luxury goods, hospitality ya public relations ke field me unnati dilata hai.",
+    "weight": 1.6,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "BIZ-018",
+    "topic": "business_career",
+    "source": "Moon in 10th Public dealing principle, paraphrased",
+    "condition": { "planet": "Moon", "inHouse": [10] },
+    "effect": "Chandra 10th house me hone se career me public connection, travel aur adaptability badhti hai.",
+    "weight": 1.4,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-019",
+    "topic": "business_career",
+    "source": "1st Lord in 10th House Swashakti principle, paraphrased",
+    "condition": { "house": 1, "lordInHouse": [10] },
+    "effect": "Lagna lord ka 10th house me hona self-made success aur work-driven personality darshata hai.",
+    "weight": 2.3,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-020",
+    "topic": "business_career",
+    "source": "Retrograde Saturn in Career House, paraphrased",
+    "condition": { "planet": "Saturn", "inHouse": [10, 11], "isRetrograde": true },
+    "effect": "Vakri Shani career me strategies ko baar-baar refine karne aur out-of-box hard work se unchai chhoone ka yog banata hai.",
+    "weight": 0.5,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "BIZ-021",
+    "topic": "business_career",
+    "source": "9th and 10th Lords Exchange/Connection Dharma-Karmadhipati, paraphrased",
+    "condition": { "house": 10, "lordInHouse": [9] },
+    "effect": "10th lord ka 9th house me hona dharmik aur ethical approach se high career rise deta hai (Dharma-Karma connection).",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-022",
+    "topic": "business_career",
+    "source": "11th Lord in 10th Income through profession, paraphrased",
+    "condition": { "house": 11, "lordInHouse": [10] },
+    "effect": "Labhesh (11th lord) ka Karmesh (10th) me sthiti business se continuous cashflow aur networking labh ka suchak hai.",
+    "weight": 2.0,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-023",
+    "topic": "business_career",
+    "source": "Ketu in 10th Detachment in work, paraphrased",
+    "condition": { "planet": "Ketu", "inHouse": [10] },
+    "effect": "Ketu 10th me traditional hierarchy se alag independent ya technical/research based work me accha perform karwata hai.",
+    "weight": -0.6,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "BIZ-024",
+    "topic": "business_career",
+    "source": "Jupiter Aspect on 2nd or 11th House, paraphrased",
+    "condition": { "aspectOnHouse": 11, "byPlanet": "Jupiter" },
+    "effect": "Guru ki 11th house par drishti business profits aur investors ka vishwas mazboot karti hai.",
+    "weight": 1.9,
+    "confidence": "classical"
+  },
+  {
+    "id": "BIZ-025",
+    "topic": "business_career",
+    "source": "Mars-Saturn Conjunction in Kendra, paraphrased",
+    "condition": { "conjunction": ["Mars", "Saturn"], "inHouse": [1, 10] },
+    "effect": "Mangal aur Shani ka kendra me yog high technical capability deta hai, par workplace relationships me patience rakhna zaroori hai.",
+    "weight": 0.2,
+    "confidence": "classical"
+  }
+]

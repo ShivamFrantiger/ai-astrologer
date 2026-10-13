@@ -1,0 +1,137 @@
+[
+  {
+    "id": "MAR-001",
+    "topic": "marriage",
+    "source": "BPHS 7th Lord in Kendra/Trikona, paraphrased",
+    "condition": { "house": 7, "lordInHouse": [1, 4, 5, 7, 9, 10] },
+    "effect": "7th lord kendra ya trikona me hone se understanding, supportive aur sanskari jeevansathi milne ka shubh yog banta hai.",
+    "weight": 2.4,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-002",
+    "topic": "marriage",
+    "source": "Jupiter in 7th House principle, paraphrased",
+    "condition": { "planet": "Jupiter", "inHouse": [7] },
+    "effect": "Guru 7th house me dampatya jeevan me aadar, ethical bonding aur maturity deta hai.",
+    "weight": 2.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-003",
+    "topic": "marriage",
+    "source": "Venus in 7th Karaka principle, paraphrased",
+    "condition": { "planet": "Venus", "inHouse": [7] },
+    "effect": "Shukra 7th house me prem aur saundarya deta hai, lekin Karako Bhavanasaya Siddhanta ke anusaar expectations realistic rakhni chahiye.",
+    "weight": 1.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-004",
+    "topic": "marriage",
+    "source": "7th Lord in Dusthana principle, paraphrased",
+    "condition": { "house": 7, "lordInHouse": [6, 8, 12] },
+    "effect": "7th lord 6th, 8th ya 12th me hone par vivah me samay lag sakta hai ya health/distance ko lekar adjustments zaroori hote hain.",
+    "weight": -1.8,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-005",
+    "topic": "marriage",
+    "source": "Saturn in 7th House Delay principle, paraphrased",
+    "condition": { "planet": "Saturn", "inHouse": [7] },
+    "effect": "Shani 7th house me vivah me thoda vilamb (delay around 28-30+ years) karata hai, par paripakvata aur committed stability deta hai.",
+    "weight": -0.7,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-006",
+    "topic": "marriage",
+    "source": "Mars in 7th Mangal Dosha factor, paraphrased",
+    "condition": { "planet": "Mars", "inHouse": [7] },
+    "effect": "Mangal 7th house me aggressive communication se bachav aur horoscope matching ki aavashyakta darshata hai.",
+    "weight": -1.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-007",
+    "topic": "marriage",
+    "source": "Aspect of Jupiter on 7th House, paraphrased",
+    "condition": { "aspectOnHouse": 7, "byPlanet": "Jupiter" },
+    "effect": "Devguru Brihaspati ki 7th house par drishti har prakar ke vivah sambandhi doshon ka shamanam (protection) karti hai.",
+    "weight": 2.5,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-008",
+    "topic": "marriage",
+    "source": "7th Lord Exalted, paraphrased",
+    "condition": { "house": 7, "isExalted": true },
+    "effect": "7th lord uccha sthiti me hone se pratishthit parivar se jeevansathi milta hai.",
+    "weight": 2.2,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-009",
+    "topic": "marriage",
+    "source": "7th Lord Debilitated, paraphrased",
+    "condition": { "house": 7, "isDebilitated": true },
+    "effect": "Saptamesh neecha hone par mutual understanding aur communication par vishesh dhyan dena chahiye.",
+    "weight": -1.6,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-010",
+    "topic": "marriage",
+    "source": "Running Dasha of 7th Lord/Venus, paraphrased",
+    "condition": { "dashaLord": "current", "houseOwned": [7] },
+    "effect": "Saptamesh ya shubh dasha ka aana vivah ya rishte pakke hone ka sateek samay darshata hai.",
+    "weight": 2.6,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-011",
+    "topic": "marriage",
+    "source": "Rahu in 7th House Inter-caste/Unconventional, paraphrased",
+    "condition": { "planet": "Rahu", "inHouse": [7] },
+    "effect": "Rahu 7th me unconventional, modern ya door ke sthan se sambandh banata hai.",
+    "weight": 0.5,
+    "confidence": "common-practice"
+  },
+  {
+    "id": "MAR-012",
+    "topic": "marriage",
+    "source": "Venus and Jupiter Conjunction, paraphrased",
+    "condition": { "conjunction": ["Jupiter", "Venus"], "inHouse": [1, 5, 7, 9] },
+    "effect": "Guru aur Shukra ka yog romantic aur sanskari dampatya jeevan ka yog banata hai.",
+    "weight": 2.0,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-013",
+    "topic": "marriage",
+    "source": "Moon in 7th Emotional connect, paraphrased",
+    "condition": { "planet": "Moon", "inHouse": [7] },
+    "effect": "Chandra 7th me sensitive, caring aur sundar jeevansathi darshata hai.",
+    "weight": 1.7,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-014",
+    "topic": "marriage",
+    "source": "1st Lord in 7th Strong devotion to partner, paraphrased",
+    "condition": { "house": 1, "lordInHouse": [7] },
+    "effect": "Lagna lord ka 7th me hona partner ke prati gehri nishtha aur partnership mindset darshata hai.",
+    "weight": 2.0,
+    "confidence": "classical"
+  },
+  {
+    "id": "MAR-015",
+    "topic": "marriage",
+    "source": "Sun in 7th Ego Management, paraphrased",
+    "condition": { "planet": "Sun", "inHouse": [7] },
+    "effect": "Surya 7th house me hone se dono partners ko ego issues se bachna chahiye aur paraspar samman banaye rakhna chahiye.",
+    "weight": -0.8,
+    "confidence": "classical"
+  }
+]

@@ -100,6 +100,7 @@ export function NavBar() {
 
   const menuItems = [
     { name: translations.nav.Homepage, route: "/" },
+    { name: "Kundli", route: "/kundli" },
     { name: translations.nav.Horoscope, route: "/horoscope" },
     { name: translations.nav["Astrology Services"], route: "/astrology-services" },
     { name: translations.nav["About Us"], route: "/about" },
