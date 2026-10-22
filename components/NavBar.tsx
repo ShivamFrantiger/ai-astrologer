@@ -39,6 +39,8 @@ import {
   Settings,
   Smile,
   User,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 
 import {
@@ -100,6 +102,7 @@ export function NavBar() {
 
   const menuItems = [
     { name: translations.nav.Homepage, route: "/" },
+    { name: "Jyotix AI", route: "/chat" },
     { name: "Kundli", route: "/kundli" },
     { name: translations.nav.Horoscope, route: "/horoscope" },
     { name: translations.nav["Astrology Services"], route: "/astrology-services" },
@@ -108,6 +111,11 @@ export function NavBar() {
   ];
 
   const commandItems = [
+    {
+      name: "Jyotix AI Chat (Birth Details & Astrology)",
+      route: "/chat",
+      icon: <Sparkles className="text-[#f7d774]" />,
+    },
     {
       name: translations.command.dailyHoroscope,
       route: "/horoscope",
@@ -139,7 +147,7 @@ export function NavBar() {
         </Link>
 
         {/* DESKTOP NAVIGATION */}
-        <div className="flex-1 min-w-0 flex justify-center px-4">
+        <div className="flex-1 min-w-0 flex justify-center px-4 uppercase">
           <NavigationMenu
             viewport={false}
             className="hidden md:block"
@@ -170,33 +178,7 @@ export function NavBar() {
         </div>
         {/* SEARCH, LANGUAGE, + AUTH */}
         <div className="flex items-center gap-4 flex-shrink-0">
-          <button
-            onClick={() => setOpen(true)}
-            className="flex items-center gap-1 text-white hover:opacity-80 transition hover:cursor-pointer"
-            aria-label="Search"
-          >
-            <Search size={20} />
-          </button>
-          
-          <div className="flex items-center gap-2">
-            <Languages className="h-5 w-5 text-gray-400" />
-            <Select
-              value={language}
-              onValueChange={(value) =>
-                setLanguage(value as "en" | "hi" | "ur")
-              }
-            >
-              <SelectTrigger className="bg-transparent border-none text-white w-[100px] focus:ring-0">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-black text-white border-gray-700">
-                <SelectItem value="en" className="cursor-pointer">English</SelectItem>
-                <SelectItem value="hi" className="cursor-pointer">Hindi</SelectItem>
-                <SelectItem value="ur" className="cursor-pointer">Urdu</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+         
           {/* Desktop Auth */}
           {!user ? (
             <div className="flex items-center gap-4">

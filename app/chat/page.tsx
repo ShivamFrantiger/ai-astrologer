@@ -1,32 +1,52 @@
 "use client";
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { ServiceChatView } from '@/components/chat/ServiceChatView';
-
-const NavBar = dynamic(() => import('@/components/NavBar').then((mod) => mod.NavBar), {
-  ssr: false,
-});
-const BottomNavBar = dynamic(() => import('@/components/BottomNavBar').then((mod) => mod.BottomNavBar), {
-  ssr: false,
-});
 
 function ChatPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceKey = searchParams.get('service') || 'chat-with-astrologer';
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const updateHeight = () => {
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      } else {
+        setViewportHeight(window.innerHeight);
+      }
+    };
+
+    updateHeight();
+    window.visualViewport?.addEventListener('resize', updateHeight);
+    window.visualViewport?.addEventListener('scroll', updateHeight);
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateHeight);
+      window.visualViewport?.removeEventListener('scroll', updateHeight);
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b0d11] text-[#f8f8f8] flex flex-col font-sans">
-      <NavBar />
-      <main className="flex-1 w-full h-[calc(100vh-65px)] overflow-hidden flex flex-col">
+    <div
+      className="fixed inset-0 w-full bg-[#f5efe6] flex flex-col font-sans overflow-hidden select-none"
+      style={{
+        height: viewportHeight ? `${viewportHeight}px` : '100dvh',
+        maxHeight: viewportHeight ? `${viewportHeight}px` : '100dvh',
+      }}
+    >
+      <main className="flex-1 min-h-0 w-full h-full overflow-hidden flex flex-col">
         <ServiceChatView
           serviceKey={serviceKey}
-          onBack={() => router.push('/astrology-services')}
+          onBack={() => router.push('/')}
         />
       </main>
-      <BottomNavBar />
     </div>
   );
 }

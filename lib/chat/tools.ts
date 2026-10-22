@@ -81,29 +81,44 @@ export async function executeGenerateKundli(params: {
     console.warn('Cache lookup skipped:', err);
   }
 
-  // 4. Fetch from Prokerala API
-  const raw = await fetchProkeralaKundli({
-    lat: geocode.lat,
-    lon: geocode.lon,
-    isoDateTime,
-  });
+  // 4. Fetch from Prokerala API with fallback to internal Vedic calculator
+  let normalized: NormalizedKundli;
+  try {
+    const raw = await fetchProkeralaKundli({
+      lat: geocode.lat,
+      lon: geocode.lon,
+      isoDateTime,
+    });
 
-  // 5. Normalize
-  const normalized = normalizeKundliData({
-    label,
-    birth: {
+    normalized = normalizeKundliData({
+      label,
+      birth: {
+        date,
+        time: time.slice(0, 5),
+        place: geocode.displayName,
+        lat: geocode.lat,
+        lon: geocode.lon,
+        timezone,
+        isApproximateTime,
+      },
+      planetData: raw.planetData,
+      chartSvg: raw.chartSvg,
+      dashaData: raw.dashaData,
+    });
+  } catch (apiErr: any) {
+    console.warn('Prokerala API failed (falling back to internal Vedic ephemeris):', apiErr.message);
+    const { calculateFallbackKundli } = await import('../kundli/fallbackCalculator');
+    normalized = calculateFallbackKundli({
       date,
       time: time.slice(0, 5),
       place: geocode.displayName,
       lat: geocode.lat,
       lon: geocode.lon,
       timezone,
+      label,
       isApproximateTime,
-    },
-    planetData: raw.planetData,
-    chartSvg: raw.chartSvg,
-    dashaData: raw.dashaData,
-  });
+    });
+  }
 
   normalized.id = cacheKey;
 

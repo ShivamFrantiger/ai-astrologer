@@ -10,6 +10,7 @@ export const PersonalizedAstrologyChatInputSchema = z.object({
   birthPlace: z.string().describe("The user's birth place."),
   userId: z.string().describe("The user's ID."),
   kundliContext: z.string().optional().describe("Serialized Kundli chart JSON context without chartSvg."),
+  ragContext: z.string().optional().describe("Retrieved reference passages from astrology books."),
 });
 
 export type PersonalizedAstrologyChatInput = z.infer<

@@ -15,7 +15,9 @@ import {
   LogIn,
   UserPlus,
   LogOut,
-  Search
+  Search,
+  BookOpen,
+  Sparkles,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -73,6 +75,11 @@ export function GlassmorphicMenu({ setMenuOpen }: GlassmorphicMenuProps) {
   };
 
   const menuItems = [
+    {
+      name: "Jyotix AI Astrologer",
+      route: "/chat",
+      icon: <Sparkles className="h-5 w-5 text-[#f7d774]" />,
+    },
     {
       name: translations.nav.Homepage,
       route: "/",

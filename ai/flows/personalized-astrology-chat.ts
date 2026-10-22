@@ -12,6 +12,7 @@ import { PersonalizedAstrologyChatInputSchema } from '@/ai/schemas/personalized-
 import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Subscription } from '@/app/types/subscription';
+import { retrieveAstrologyKnowledge } from '@/lib/rag/retriever';
 
 export async function personalizedAstrologyChat(input: PersonalizedAstrologyChatInput): Promise<string> {
   return personalizedAstrologyChatFlow(input);
@@ -114,6 +115,14 @@ Birth Place: {{{birthPlace}}}
 **RULES FOR KUNDLI READING:**
 You are a Vedic astrologer. Use ONLY the provided chart data. Never recalculate or invent planetary positions. Answer in Hinglish, concise. If data is missing, say so.
 For career/business questions, highlight 10th house, 7th house, their lords and the running dasha.
+{{/if}}
+{{#if ragContext}}
+
+---
+### 📚 AUTHENTIC ASTROLOGY REFERENCE CONTEXT:
+{{{ragContext}}}
+
+Prioritize insights from custom astrology books and classical references provided above. Explain the reasoning clearly in Hinglish. Never invent ungrounded claims.
 {{/if}}`,
 });
 
@@ -134,6 +143,21 @@ const personalizedAstrologyChatFlow = ai.defineFlow(
             const data = kundliSnap.docs[0].data();
             const { chartSvg, ...rest } = data;
             input.kundliContext = JSON.stringify(rest, null, 2);
+          }
+        } catch (e) {
+          // Gracefully continue
+        }
+      }
+
+      // 📚 RAG Knowledge Retrieval Injection
+      if (!input.ragContext && input.question) {
+        try {
+          const rag = await retrieveAstrologyKnowledge(input.question, {
+            topK: 3,
+            minScore: 0.50,
+          });
+          if (rag.formattedContext) {
+            input.ragContext = rag.formattedContext;
           }
         } catch (e) {
           // Gracefully continue

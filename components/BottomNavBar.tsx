@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Star, Plus, Mail, User } from "lucide-react";
+import { Home, MessageSquare, Plus, Star, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GlassmorphicMenu } from "./GlassmorphicMenu";
@@ -24,9 +24,9 @@ export function BottomNavBar() {
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
-    { href: "/horoscope", icon: Star, label: "Horoscope" },
+    { href: "/chat", icon: MessageSquare, label: "Jyotix AI" },
     { isCentral: true },
-    { href: "/contact", icon: Mail, label: "Contact" },
+    { href: "/horoscope", icon: Star, label: "Horoscope" },
     { href: user ? "/profile" : "/login", icon: User, label: user ? "Profile" : "Login" },
   ];
 
@@ -36,23 +36,23 @@ export function BottomNavBar() {
         {menuOpen && <GlassmorphicMenu setMenuOpen={setMenuOpen} />}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-[#1e2128]/95 backdrop-blur-sm p-2 z-50 flex justify-around items-center rounded-t-2xl shadow-lg border-t border-gray-700 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 h-18 bg-[#12141a]/95 backdrop-blur-md px-2 py-1.5 z-50 flex justify-around items-center rounded-t-2xl shadow-[0_-4px_25px_rgba(0,0,0,0.6)] border-t border-[#d4af37]/20 md:hidden">
         {navItems.map((item, index) => {
           if (item.isCentral) {
             return (
-              <div key={`central-button-${index}`} className="-translate-y-6">
+              <div key={`central-button-${index}`} className="-translate-y-5">
                 <motion.button
                   onClick={() => setMenuOpen(!menuOpen)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="bg-[#FFC249] text-black rounded-full h-16 w-16 flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className="bg-gradient-to-tr from-[#d4af37] via-[#f7d774] to-[#fcebb6] text-black rounded-full h-14 w-14 flex items-center justify-center shadow-[0_4px_20px_rgba(212,175,55,0.45)] ring-4 ring-[#12141a]"
                   aria-label="Open menu"
                 >
                   <motion.div
                     animate={{ rotate: menuOpen ? 45 : 0 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.25 }}
                   >
-                    <Plus size={32} />
+                    <Plus size={28} className="stroke-[2.5]" />
                   </motion.div>
                 </motion.button>
               </div>
@@ -64,12 +64,14 @@ export function BottomNavBar() {
             <Link
               href={item.href!}
               key={item.href}
-              className={`flex flex-col items-center justify-center w-1/5 transition-colors ${
-                isActive ? "text-[#FFC249]" : "text-gray-400 hover:text-white"
+              className={`flex flex-col items-center justify-center w-1/5 py-1 transition-all ${
+                isActive ? "text-[#f3cd68] scale-105" : "text-gray-400 hover:text-white"
               }`}
             >
-              <Icon size={24} />
-              <span className="text-xs mt-1">{item.label}</span>
+              <Icon size={21} className={isActive ? "stroke-[2.5]" : "stroke-[1.8]"} />
+              <span className={`text-[11px] mt-1 font-medium ${isActive ? "font-bold text-[#f3cd68]" : ""}`}>
+                {item.label}
+              </span>
             </Link>
           );
         })}

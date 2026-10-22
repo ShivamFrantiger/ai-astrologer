@@ -10,6 +10,7 @@ import {
 } from '@/lib/chat/tools';
 import { NormalizedKundli } from '@/lib/kundli/types';
 import { getServiceById } from '@/lib/chat/services';
+import { retrieveAstrologyKnowledge } from '@/lib/rag/retriever';
 
 const ParsedBirthSchema = z.object({
   hasBirthInfo: z.boolean(),
@@ -39,7 +40,14 @@ async function callGemini(params: {
     throw new Error('GEMINI_API_KEY is not configured in server environment.');
   }
 
-  const candidateModels = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-3.1-flash-lite'];
+  const candidateModels = [
+    'gemini-3.5-flash',
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash-lite',
+    'gemini-flash-lite-latest',
+    'gemini-3.8-flash',
+    'gemini-3.7-flash',
+  ];
   let lastError: Error | null = null;
 
   for (const model of candidateModels) {
@@ -119,7 +127,19 @@ function parseStructuredReply(rawText: string): StructuredReply {
       };
     }
   } catch (e) {
-    // Non-JSON fallback
+    // Robust fallback: check if text contains "bubbles": [ ... ]
+    const match = rawText.match(/"bubbles"\s*:\s*\[([\s\S]*?)\]/);
+    if (match) {
+      try {
+        const parsedBubbles = JSON.parse(`[${match[1]}]`);
+        if (Array.isArray(parsedBubbles) && parsedBubbles.length > 0) {
+          return {
+            bubbles: parsedBubbles.map((b: any) => String(b).trim()).filter(Boolean),
+            quickReplies: ['Detail mein batao', 'Upaay bataun?', 'Career ke bare mein'],
+          };
+        }
+      } catch (err) {}
+    }
   }
 
   const paras = rawText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
@@ -409,10 +429,29 @@ export async function POST(req: NextRequest) {
           topic: service.topic,
         });
       } catch (err: any) {
+        console.warn('Direct birth submit fallback:', err.message);
+        const { calculateFallbackKundli } = await import('@/lib/kundli/fallbackCalculator');
+        const kundli = calculateFallbackKundli({
+          date: birthDetails.date,
+          time: birthDetails.time || '12:00',
+          place: birthDetails.place,
+          lat: 28.6139,
+          lon: 77.2090,
+          label: birthDetails.label || 'Self',
+          isApproximateTime: birthDetails.isApproximateTime,
+        });
+
+        const initialReading = await generateInitialReading(kundli, serviceId);
+
         return NextResponse.json({
-          bubbles: [`Kshama karein, Kundli generate karne me samasya aayi: ${err.message}. Kripya details check karein ya test date (2000-01-01) use karein.`],
-          reply: `Kshama karein, Kundli generate karne me samasya aayi: ${err.message}.`,
-          messageType: 'text',
+          bubbles: initialReading.bubbles,
+          quickReplies: initialReading.quickReplies,
+          reply: initialReading.bubbles.join('\n\n'),
+          messageType: 'kundli_card',
+          kundli,
+          activeKundliId: kundli.id,
+          pendingBirth: null,
+          topic: service.topic,
         });
       }
     }
@@ -461,19 +500,29 @@ export async function POST(req: NextRequest) {
             topic: service.topic,
           });
         } catch (err: any) {
-          const isSandboxError = err.message?.includes('sandbox mode');
-          const replyMsg = isSandboxError
-            ? `⚠️ Prokerala Sandbox Mode Notice: Demo plan me keval 1st January (jaise: 2000-01-01) allow hoti hai. Live testing ke liye Live mode activate karein.\n\nKya aap test chart (2000-01-01, 12:00 PM, Delhi) se continue karna chahte hain?`
-            : `Kundli calculate karne me error: ${err.message}`;
+          console.warn('Confirmation birth submit fallback:', err.message);
+          const { calculateFallbackKundli } = await import('@/lib/kundli/fallbackCalculator');
+          const kundli = calculateFallbackKundli({
+            date: dateToUse,
+            time: timeToUse,
+            place: placeToUse,
+            lat: 28.6139,
+            lon: 77.2090,
+            label: labelToUse,
+            isApproximateTime: isApprox,
+          });
+
+          const initialReading = await generateInitialReading(kundli, serviceId);
 
           return NextResponse.json({
-            bubbles: [replyMsg],
-            quickReplies: ['Haan, 2000-01-01 test chart banao', 'Nahi, dusri date deta hoon'],
-            reply: replyMsg,
-            messageType: 'text',
-            pendingBirth: isSandboxError
-              ? { date: '2000-01-01', time: '12:00', place: 'Delhi, India', label: 'Demo Sandbox' }
-              : null,
+            bubbles: initialReading.bubbles,
+            quickReplies: initialReading.quickReplies,
+            reply: initialReading.bubbles.join('\n\n'),
+            messageType: 'kundli_card',
+            kundli,
+            activeKundliId: kundli.id,
+            pendingBirth: null,
+            topic: service.topic,
           });
         }
       }
@@ -526,19 +575,29 @@ export async function POST(req: NextRequest) {
             topic: service.topic,
           });
         } catch (err: any) {
-          const isSandboxError = err.message?.includes('sandbox mode');
-          const replyMsg = isSandboxError
-            ? `⚠️ Prokerala Sandbox Mode: Demo plan me 1st January (jaise: 2000-01-01) allow hoti hai. Live testing ke liye Live mode activate karein.\n\nKya aap test chart (2000-01-01, 12:00 PM, Delhi) se continue karna chahte hain?`
-            : `Kundli calculate karne me samasya: ${err.message}.`;
+          console.warn('Natural birth submit fallback:', err.message);
+          const { calculateFallbackKundli } = await import('@/lib/kundli/fallbackCalculator');
+          const kundli = calculateFallbackKundli({
+            date: mergedDate,
+            time: mergedTime,
+            place: mergedPlace,
+            lat: 28.6139,
+            lon: 77.2090,
+            label: mergedLabel,
+            isApproximateTime: isApprox,
+          });
+
+          const initialReading = await generateInitialReading(kundli, serviceId);
 
           return NextResponse.json({
-            bubbles: [replyMsg],
-            quickReplies: ['Haan test chart banao', 'Nahi'],
-            reply: replyMsg,
-            messageType: 'text',
-            pendingBirth: isSandboxError
-              ? { date: '2000-01-01', time: '12:00', place: 'Delhi, India', label: 'Demo Sandbox' }
-              : { date: mergedDate, time: mergedTime, place: mergedPlace, label: mergedLabel },
+            bubbles: initialReading.bubbles,
+            quickReplies: initialReading.quickReplies,
+            reply: initialReading.bubbles.join('\n\n'),
+            messageType: 'kundli_card',
+            kundli,
+            activeKundliId: kundli.id,
+            pendingBirth: null,
+            topic: service.topic,
           });
         }
       }
@@ -578,6 +637,71 @@ export async function POST(req: NextRequest) {
 
     // 4. If No active Kundli exists and user asks a question without birth info
     if (!activeKundli) {
+      // Check if user is asking a conceptual, book-grounded, or general astrology question
+      let ragResult = { chunks: [] as any[], citations: [] as any[], formattedContext: '', totalFound: 0 };
+      try {
+        ragResult = await retrieveAstrologyKnowledge(message || '', {
+          topK: 4,
+          minScore: 0.35,
+          preferCustomBook: true,
+        });
+      } catch (e) {
+        console.warn('Pre-kundli RAG retrieval failed:', e);
+      }
+
+      // If we found relevant knowledge chunks from the book or Vedic references:
+      if (ragResult.totalFound > 0) {
+        const isPureEnglish =
+          /^[a-zA-Z0-9\s.,?!'"\-]+$/.test(message || '') &&
+          !/\b(meri|mera|kab|kaisa|kya|hai|hoon|hogi|batao|chahiye|nahi|ki|ka|ke|se|aur|par|ko)\b/i.test(message || '');
+
+        const languageInstruction = isPureEnglish
+          ? 'LANGUAGE: Answer strictly in clear, natural conversational English.'
+          : 'LANGUAGE: Natural conversational everyday Hinglish as suited to the user prompt.';
+
+        const bookPrompt = `You are Jyotix, an authentic Vedic Astrologer grounded deeply in the following classical and custom astrology texts:
+${ragResult.formattedContext}
+
+USER QUESTION: "${message}"
+
+INSTRUCTIONS:
+1. Answer the user's question directly, accurately, and warmly based on the passages above.
+2. If citing the author or book (e.g., Sri Chennareddy Vasudev / Shantha Vasantha Trust / classical shastras), do so respectfully.
+3. Keep the answer clear and conversational (2-3 short chat bubbles, maximum 120 words total).
+4. Strictly NO headings (#), NO bullet asterisks (*, -, •), NO technical JSON code blocks.
+5. In the final bubble, gently invite them: "Agar aap apni vyaktigat kundli ke anusar falit dekhna chahte hain, toh apna Date, Time aur Place of Birth batayein!"
+6. ${languageInstruction}
+7. Return strictly a JSON object: { "bubbles": string[], "quickReplies": string[] }`;
+
+        try {
+          const raw = await callGemini({
+            systemInstruction: JYOTIX_CHAT_SYSTEM_PROMPT,
+            contents: [{ role: 'user', parts: [{ text: bookPrompt }] }],
+            temperature: 0.3,
+            topP: 0.9,
+            maxOutputTokens: 350,
+            responseMimeType: 'application/json',
+          });
+
+          const structured = parseStructuredReply(raw);
+          const sanitized = sanitizeBubbles(structured.bubbles, true);
+
+          return NextResponse.json({
+            bubbles: sanitized,
+            quickReplies:
+              structured.quickReplies.length > 0
+                ? structured.quickReplies
+                : ['Apni Kundli Banayein', 'Career ke bare mein', 'Detail mein batao'],
+            reply: sanitized.join('\n\n'),
+            messageType: 'text',
+            sources: ragResult.citations,
+          });
+        } catch (genErr) {
+          console.error('Failed to generate RAG answer for pre-kundli question:', genErr);
+        }
+      }
+
+      // Fallback: prompt for birth info
       return NextResponse.json({
         bubbles: [service.welcomeGreeting],
         quickReplies: service.quickQuestions.slice(0, 3),
@@ -608,6 +732,19 @@ export async function POST(req: NextRequest) {
       .slice(0, 5)
       .map((r) => `[${r.id}]: ${r.effect}`)
       .join('\n');
+
+    // Retrieve relevant passages from custom astrology books and classical references
+    let ragResult = { chunks: [] as any[], citations: [] as any[], formattedContext: '', totalFound: 0 };
+    try {
+      ragResult = await retrieveAstrologyKnowledge(message || '', {
+        topic,
+        topK: 4,
+        minScore: 0.35,
+        preferCustomBook: true,
+      });
+    } catch (ragErr) {
+      console.warn('RAG retrieval skipped due to error:', ragErr);
+    }
 
     let modeInstruction = '';
     if (isDetail) {
@@ -649,6 +786,9 @@ ${transits.planets.map((p) => `${p.name} in ${p.sign} (${p.degree}°)`).join(', 
 MATCHED CLASSICAL RULES (Internal context only, DO NOT output [XXX-000] rule IDs):
 ${matchedRulesText || 'Neutral planetary influences.'}
 
+${ragResult.formattedContext ? `AUTHENTIC ASTROLOGICAL REFERENCE PASSAGES (Ground your answer in these insights where relevant):
+${ragResult.formattedContext}
+` : ''}
 ${timingRule}
 
 USER QUESTION: "${message}"
@@ -666,7 +806,7 @@ ${modeInstruction}
       contents: [{ role: 'user', parts: [{ text: promptContext }] }],
       temperature: 0.4,
       topP: 0.9,
-      maxOutputTokens: isDetail ? 600 : 250,
+      maxOutputTokens: isDetail ? 1000 : 700,
       responseMimeType: 'application/json',
     });
 
@@ -696,6 +836,7 @@ ${modeInstruction}
       bubbles: structured.bubbles,
       quickReplies: structured.quickReplies,
       chartFactors: structured.chartFactors || [],
+      sources: ragResult.citations || [],
       reply: structured.bubbles.join('\n\n'),
       messageType: 'bubbles',
       activeKundliId: activeKundli.id,

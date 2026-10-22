@@ -22,15 +22,12 @@ export const ASTROLOGY_SERVICES: Record<string, AstrologyServiceConfig> = {
     titleHi: 'करियर और वित्त परामर्श',
     topic: 'business_career',
     icon: '/svg/briefcase.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Career & Finance Consultation** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Aapke career, job ya business ko lekar kya chal raha hai dimag mein? Niche apni birth details enter karein taaki main 10th house aur dasha dekh kar clear direction de sakun.`,
     initialReadingPrompt: 'Analyze career prospects, 10th house (Karma Bhava), 2nd house (Wealth), 11th house (Gains), and active Mahadasha for career direction.',
     quickQuestions: [
-      'Mera promotion aur career growth kab hoga?',
-      'Job continue karoon ya naya business shuru karoon?',
-      'Mera Dhana Yoga aur financial status kaisa hai?',
+      'Mera promotion aur growth kab hoga?',
+      'Job continue karoon ya business shuru karoon?',
+      'Dhana Yoga aur financial stability kaisi rahegi?',
       'Current Mahadasha me career kaisa rahega?',
     ],
   },
@@ -41,16 +38,13 @@ Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Bi
     titleHi: 'प्रेम और संबंध मार्गदर्शन',
     topic: 'marriage',
     icon: '/svg/heart.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Love & Relationship Guidance** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Relationship ya shaadi ko lekar kya sawal hai aapka? Niche dialpad par apni birth details de dijiye, main aapke 7th house aur Venus ki sthiti dekh kar sachha margdarshan karunga.`,
     initialReadingPrompt: 'Analyze marriage & relationship prospects, 7th house (Kalatra), 5th house (Romance), Venus, and Jupiter placements.',
     quickQuestions: [
-      'Mera vivah (marriage) ka yog kab ban raha hai?',
-      'Meri love marriage hogi ya arranged marriage?',
-      'Mera jeevansathi kaisa hoga aur uska nature kaisa rahega?',
-      'Relationship me shanti aur prem ke liye kya upay karein?',
+      'Mera vivah kab tak ban raha hai?',
+      'Love marriage hogi ya arranged?',
+      'Mera jeevansathi kaisa hoga?',
+      'Relationship mein shanti ke liye kya karein?',
     ],
   },
   'matchmaking': {
@@ -60,16 +54,13 @@ Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Bi
     titleHi: 'कुंडली मिलान और अनुकूलता',
     topic: 'marriage',
     icon: '/svg/gem.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Kundli Milan & Compatibility** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Kundli milan aur rishte ki stability dekhne ke liye birth details enter karein. Main Guna Milan aur 7th house dosh ka vishleshan karke bataunga.`,
     initialReadingPrompt: 'Analyze marriage stability, 7th house strength, Manglik dosh factors, and harmony in partnership.',
     quickQuestions: [
-      'Kya meri Kundli me Manglik dosh ya koi dosh hai?',
+      'Kundli mein Manglik ya koi dosh hai?',
       'Vivah ke baad dampatya jeevan kaisa rahega?',
-      'Partner ke sath understanding badhane ke Vedic upay kya hain?',
-      'Vivah me deri ke kya kaaran hain aur kab yog banega?',
+      'Partner ke sath understanding kaisi rahegi?',
+      'Vivah mein delay kyun ho raha hai?',
     ],
   },
   'horoscope-readings': {
@@ -79,14 +70,11 @@ Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Bi
     titleHi: 'कुंडली और भविष्यफल',
     topic: 'general',
     icon: '/svg/book-open.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Kundli & Horoscope Readings** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Aapki janma kundali ke mukhya yog aur aane wale samay ka vishleshan karne ke liye apni birth details niche enter karein.`,
     initialReadingPrompt: 'Provide an overview of Ascendant (Lagna), Moon sign, key yogas, and current Mahadasha period.',
     quickQuestions: [
-      'Meri Kundli ka Lagna aur Chandra Rashi ka fal kya hai?',
-      'Aane wala samay aur running Mahadasha kaisi rahegi?',
+      'Meri Kundli ka Lagna aur Rashi fal kya hai?',
+      'Running Mahadasha ka kaisa asar rahega?',
       'Mera bhagyodaya kab hoga?',
       'Kundli ka sabse shubh graha kaun sa hai?',
     ],
@@ -98,16 +86,13 @@ Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Bi
     titleHi: 'ज्योतिषीय उपाय और समाधान',
     topic: 'health_general',
     icon: '/svg/star.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Vedic Remedies & Upay** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Kaun se graha ya pareshani ke liye upay janna chahte hain? Niche birth details enter karein taaki shastriya aur satvik upay nikaal sakun.`,
     initialReadingPrompt: 'Identify afflicted or weak planets (combust, debilitated, in 6/8/12 houses) and prescribe authentic Vedic remedies, gemstones, and mantras.',
     quickQuestions: [
-      'Meri Kundli me kaun sa graha peedit ya kamzor hai?',
-      'Mujhe kaun sa Ratna (Gemstone) pehanna chahiye?',
-      'Graha dosh shanti ke liye kaun sa mantra japna labhdayak hoga?',
-      'Nazar dosh aur durbhagya se bachne ke saral upay kya hain?',
+      'Kaun sa graha peedit ya kamzor hai?',
+      'Kaun sa Ratna dharan karna chahiye?',
+      'Graha shanti ke liye kaun sa mantra sahi hai?',
+      'Rukawaton ko door karne ke saral upay kya hain?',
     ],
   },
   'chat-with-astrologer': {
@@ -117,16 +102,13 @@ Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Bi
     titleHi: 'ज्योतिषी से सीधा परामर्श',
     topic: 'general',
     icon: '/svg/message-circle.svg',
-    welcomeGreeting: `Namaste! Jyotix me aapka swagat hai. Main aapki **Jyotish Paramarsh (Astrology Consultation)** me kaise madad kar sakta hoon?
-
-Sateek Vedic bhavishyavani ke liye, kya aap apna **Date of Birth**, **Time of Birth**, aur **Place of Birth** bata sakte hain?
-*(Jaise: 14 May 2000, 6:30 PM, Delhi)*`,
+    welcomeGreeting: `Swagat hai! Aapke man mein jeevan, career ya rishton ko lekar jo bhi duvidha hai, bejhijhak puchiye. Niche dialpad par apni birth details de dijiye.`,
     initialReadingPrompt: 'Introduce the native chart, Lagna, Moon sign, and open consultation for all life aspects.',
     quickQuestions: [
-      'Mera career aur business kaisa rahega?',
-      'Meri shaadi kab tak hone ke yog hain?',
-      'Running Mahadasha ka fal kya hoga?',
-      'Dhana yoga aur aarthik sthiti kaisi rahegi?',
+      'Mera career aur business aage kaisa rahega?',
+      'Meri shaadi ka yog kab khul raha hai?',
+      'Running Mahadasha ka mere jeevan par kya asar hai?',
+      'Aarthik sthiti majboot kab hogi?',
     ],
   },
 };

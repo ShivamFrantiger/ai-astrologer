@@ -2,21 +2,26 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { KundliCard } from '@/components/chat/KundliCard';
+import { RevaDialpadInput } from '@/components/chat/RevaDialpadInput';
 import { NormalizedKundli } from '@/lib/kundli/types';
 import { getServiceById } from '@/lib/chat/services';
 import {
-  Send,
+  ArrowUp,
   Sparkles,
   User,
   Plus,
   ArrowLeft,
-  FlaskConical,
+  BookOpen,
+  ChevronRight,
+  MoreVertical,
+  Pencil,
+  Check,
+  RotateCcw,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 
@@ -24,12 +29,25 @@ interface MessageItem {
   id: string;
   sender: 'user' | 'bot';
   text: string;
-  type?: 'text' | 'kundli_card';
+  type?: 'text' | 'kundli_card' | 'dialpad';
   kundliData?: NormalizedKundli;
   quickReplies?: string[];
   chartFactors?: string[];
+  sources?: Array<{
+    title: string;
+    source: string;
+    author?: string;
+    chapter?: string;
+    section?: string;
+    page?: number | string;
+    category: string;
+    score: number;
+    snippet: string;
+    isCustomBook?: boolean;
+  }>;
   isDetail?: boolean;
   showDisclaimer?: boolean;
+  timestamp?: string;
   createdAt: string;
 }
 
@@ -52,10 +70,34 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
     Array<{ id: string; label: string; kundli: NormalizedKundli }>
   >([]);
   const [pendingBirth, setPendingBirth] = useState<any>(null);
+  const [showDialpad, setShowDialpad] = useState(false);
   const [hasShownDisclaimer, setHasShownDisclaimer] = useState(false);
   const lastUserQuestionRef = useRef<string>('');
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => {
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      } else {
+        setViewportHeight(window.innerHeight);
+      }
+    };
+
+    handleResize();
+    window.visualViewport?.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('scroll', handleResize);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('scroll', handleResize);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -63,26 +105,53 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading, isTypingBubble]);
+  }, [messages, isLoading, isTypingBubble, showDialpad]);
 
-  // Load user's saved kundlis or show warm contextual welcome greeting
+  const getCurrentTimeFormatted = () => {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12;
+    const minStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    return `${hours}:${minStr} ${ampm}`;
+  };
+
+  // Initialize Reva chat
   useEffect(() => {
     let isMounted = true;
 
     async function initChat() {
       if (!user?.uid) {
-        // Guest user initial greeting
+        // Initial onboarding matching Image 1
         if (isMounted) {
           setMessages([
             {
-              id: `welcome-${Date.now()}`,
+              id: `welcome-1`,
               sender: 'bot',
-              text: service.welcomeGreeting,
+              text: `Hi${user?.displayName ? `, ${user.displayName}` : '!'}`,
               type: 'text',
-              quickReplies: service.quickQuestions.slice(0, 3),
+              timestamp: getCurrentTimeFormatted(),
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: `welcome-2`,
+              sender: 'bot',
+              text: `I need a few details to build your kundali`,
+              type: 'text',
+              timestamp: getCurrentTimeFormatted(),
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: `welcome-3`,
+              sender: 'bot',
+              text: `When were you born?`,
+              type: 'text',
+              timestamp: getCurrentTimeFormatted(),
               createdAt: new Date().toISOString(),
             },
           ]);
+          setShowDialpad(true);
         }
         return;
       }
@@ -101,6 +170,7 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
           const first = list[0];
           setActiveKundliId(first.id);
           setActiveKundli(first.kundli);
+          setShowDialpad(false);
 
           setMessages([
             {
@@ -109,6 +179,7 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
               text: `Swagat hai! Aapki saved Kundli (${first.label} • ${first.kundli.ascendant.sign} Lagna, ${first.kundli.moonSign} Rashi) active hai.`,
               type: 'kundli_card',
               kundliData: first.kundli,
+              timestamp: getCurrentTimeFormatted(),
               createdAt: new Date().toISOString(),
             },
             {
@@ -117,34 +188,43 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
               text: `${service.title} ke sambandh mein aap kya jaan na chahte hain?`,
               type: 'text',
               quickReplies: service.quickQuestions.slice(0, 3),
+              timestamp: getCurrentTimeFormatted(),
               createdAt: new Date().toISOString(),
             },
           ]);
         } else if (isMounted) {
           setMessages([
             {
-              id: `welcome-new-${Date.now()}`,
+              id: `welcome-new-1`,
               sender: 'bot',
-              text: service.welcomeGreeting,
+              text: `Hi${user?.displayName ? `, ${user.displayName}` : '!'}`,
               type: 'text',
-              quickReplies: service.quickQuestions.slice(0, 3),
+              timestamp: getCurrentTimeFormatted(),
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: `welcome-new-2`,
+              sender: 'bot',
+              text: `I need a few details to build your kundali`,
+              type: 'text',
+              timestamp: getCurrentTimeFormatted(),
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: `welcome-new-3`,
+              sender: 'bot',
+              text: `When were you born?`,
+              type: 'text',
+              timestamp: getCurrentTimeFormatted(),
               createdAt: new Date().toISOString(),
             },
           ]);
+          setShowDialpad(true);
         }
       } catch (e) {
         console.warn('Error loading saved kundlis:', e);
         if (isMounted) {
-          setMessages([
-            {
-              id: `welcome-err-${Date.now()}`,
-              sender: 'bot',
-              text: service.welcomeGreeting,
-              type: 'text',
-              quickReplies: service.quickQuestions.slice(0, 3),
-              createdAt: new Date().toISOString(),
-            },
-          ]);
+          setShowDialpad(true);
         }
       }
     }
@@ -156,28 +236,135 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
     };
   }, [user, serviceKey]);
 
+  // Handle direct dialpad submission
+  const handleDialpadSubmit = async (details: {
+    name?: string;
+    date: string;
+    time: string;
+    place: string;
+    isApproximateTime: boolean;
+  }) => {
+    setShowDialpad(false);
+
+    // Add user message matching Image 1
+    const userMsg: MessageItem = {
+      id: `user-${Date.now()}`,
+      sender: 'user',
+      text: details.name ? `My name is ${details.name}` : `Date of Birth: ${details.date}, Time: ${details.time}, Place: ${details.place}`,
+      type: 'text',
+      timestamp: getCurrentTimeFormatted(),
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isDirectBirthSubmit: true,
+          birthDetails: {
+            date: details.date,
+            time: details.time,
+            place: details.place,
+            label: details.name || 'Self',
+            isApproximateTime: details.isApproximateTime,
+          },
+          userId: user?.uid || 'guest',
+          serviceId: service.key,
+        }),
+      });
+
+      const data = await res.json();
+      setIsLoading(false);
+
+      if (data.kundli) {
+        setActiveKundli(data.kundli);
+        setActiveKundliId(data.activeKundliId || 'active');
+
+        // Render Kundli Chart Card message with download button
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `kundli-card-${Date.now()}`,
+            sender: 'bot',
+            text: `Aapki Janam Kundli taiyar ho gayi hai (${data.kundli.ascendant.sign} Lagna, ${data.kundli.moonSign} Rashi).`,
+            type: 'kundli_card',
+            kundliData: data.kundli,
+            timestamp: getCurrentTimeFormatted(),
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+      }
+
+      // Add bot bubbles with delay
+      const bubblesToRender: string[] =
+        Array.isArray(data.bubbles) && data.bubbles.length > 0
+          ? data.bubbles
+          : [data.reply || 'Aapki Kundli ban chuki hai.'];
+
+      for (let i = 0; i < bubblesToRender.length; i++) {
+        setIsTypingBubble(true);
+        await new Promise((r) => setTimeout(r, 380));
+        setIsTypingBubble(false);
+
+        const isLast = i === bubblesToRender.length - 1;
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `bot-b-${Date.now()}-${i}`,
+            sender: 'bot',
+            text: bubblesToRender[i],
+            type: 'text',
+            quickReplies: isLast ? data.quickReplies : undefined,
+            chartFactors: isLast ? data.chartFactors : undefined,
+            sources: isLast ? data.sources : undefined,
+            timestamp: getCurrentTimeFormatted(),
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+      }
+    } catch (err: any) {
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-err-${Date.now()}`,
+          sender: 'bot',
+          text: `Kshama karein, chart banate samay samasya aayi: ${err.message}`,
+          type: 'text',
+          timestamp: getCurrentTimeFormatted(),
+          createdAt: new Date().toISOString(),
+        },
+      ]);
+    }
+  };
+
   const handleSendMessage = async (customText?: string, isDetailFlag?: boolean) => {
     let textToSend = (customText || inputText).trim();
     if (!textToSend && !isDetailFlag) return;
     if (isLoading || isTypingBubble) return;
 
     if (isDetailFlag || /detail\s+me(in)?\s+batao/i.test(textToSend)) {
-      // If asking for detail, re-ask with the last substantive user question
       if (!textToSend || /detail\s+me(in)?\s+batao/i.test(textToSend)) {
         textToSend = lastUserQuestionRef.current || 'Detail mein batao';
       }
-      isDetailFlag = true;
     } else {
       lastUserQuestionRef.current = textToSend;
     }
 
-    const userBubbleText = isDetailFlag && textToSend !== 'Detail mein batao' ? 'Detail mein batao' : textToSend;
+    if (showDialpad) {
+      setShowDialpad(false);
+    }
 
     const userMsg: MessageItem = {
-      id: `usr-${Date.now()}`,
+      id: `user-${Date.now()}`,
       sender: 'user',
-      text: userBubbleText,
+      text: textToSend,
       type: 'text',
+      timestamp: getCurrentTimeFormatted(),
       createdAt: new Date().toISOString(),
     };
 
@@ -202,42 +389,35 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.error || 'Server error occurred');
       }
 
       setIsLoading(false);
 
-      // 1. If Kundli Card is returned, display it first
       if (data.kundli) {
+        const isNewKundli = !activeKundli || data.messageType === 'kundli_card';
         setActiveKundli(data.kundli);
-        if (data.activeKundliId) {
-          setActiveKundliId(data.activeKundliId);
-        }
-        setSavedProfiles((prev) => [
-          ...prev.filter((p) => p.id !== data.activeKundliId),
-          { id: data.activeKundliId || 'active', label: data.kundli.label || 'Self', kundli: data.kundli },
-        ]);
-      }
+        if (data.activeKundliId) setActiveKundliId(data.activeKundliId);
 
-      if (data.messageType === 'kundli_card' && data.kundli) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `kcard-${Date.now()}`,
-            sender: 'bot',
-            text: '',
-            type: 'kundli_card',
-            kundliData: data.kundli,
-            createdAt: new Date().toISOString(),
-          },
-        ]);
+        if (isNewKundli) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `kundli-card-${Date.now()}`,
+              sender: 'bot',
+              text: `Aapki Janam Kundli taiyar ho gayi hai (${data.kundli.ascendant.sign} Lagna, ${data.kundli.moonSign} Rashi).`,
+              type: 'kundli_card',
+              kundliData: data.kundli,
+              timestamp: getCurrentTimeFormatted(),
+              createdAt: new Date().toISOString(),
+            },
+          ]);
+        }
       }
 
       setPendingBirth(data.pendingBirth || null);
 
-      // 2. Sequential Delivery of Bubbles with typing indicator (300-500ms)
       const bubblesToRender: string[] =
         Array.isArray(data.bubbles) && data.bubbles.length > 0
           ? data.bubbles
@@ -250,7 +430,6 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
 
       for (let i = 0; i < bubblesToRender.length; i++) {
         setIsTypingBubble(true);
-        // Short realistic typing pause between bubbles (350ms - 450ms)
         await new Promise((resolve) => setTimeout(resolve, 380));
         setIsTypingBubble(false);
 
@@ -265,8 +444,10 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
             type: 'text',
             quickReplies: isLastBubble ? data.quickReplies : undefined,
             chartFactors: isLastBubble ? data.chartFactors : undefined,
+            sources: isLastBubble && Array.isArray(data.sources) && data.sources.length > 0 ? data.sources : undefined,
             isDetail: isLastBubble ? data.isDetail : undefined,
             showDisclaimer: i === 0 && shouldShowDisclaimer,
+            timestamp: getCurrentTimeFormatted(),
             createdAt: new Date().toISOString(),
           },
         ]);
@@ -281,6 +462,7 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
           sender: 'bot',
           text: `Error: ${err.message || 'Kripya thodi der me koshish karein.'}`,
           type: 'text',
+          timestamp: getCurrentTimeFormatted(),
           createdAt: new Date().toISOString(),
         },
       ]);
@@ -290,6 +472,7 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
   const handleSelectProfile = (profile: { id: string; label: string; kundli: NormalizedKundli }) => {
     setActiveKundliId(profile.id);
     setActiveKundli(profile.kundli);
+    setShowDialpad(false);
     setMessages((prev) => [
       ...prev,
       {
@@ -298,6 +481,7 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
         text: `Active profile: ${profile.label} (${profile.kundli.ascendant.sign} Lagna, ${profile.kundli.moonSign} Rashi).`,
         type: 'kundli_card',
         kundliData: profile.kundli,
+        timestamp: getCurrentTimeFormatted(),
         createdAt: new Date().toISOString(),
       },
       {
@@ -306,232 +490,279 @@ export function ServiceChatView({ serviceKey, onBack }: ServiceChatViewProps) {
         text: `${service.title} ke baare mein aapka kya sawaal hai?`,
         type: 'text',
         quickReplies: service.quickQuestions.slice(0, 3),
+        timestamp: getCurrentTimeFormatted(),
         createdAt: new Date().toISOString(),
       },
     ]);
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-70px)] sm:h-[calc(100vh-75px)] w-full px-2 sm:px-6 py-2 gap-2 sm:gap-3">
-      {/* Top Consultation Header */}
-      <div className="bg-[#14171e] border border-[#262c38] rounded-2xl p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
-        <div className="flex items-center gap-3">
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="p-2 rounded-xl bg-[#1b1f2a] hover:bg-[#252b3a] text-gray-300 hover:text-white border border-[#2f3646] transition cursor-pointer flex items-center gap-1.5 text-xs"
-              title="Back to All Services"
-            >
-              <ArrowLeft className="w-4 h-4 text-[#ffd56b]" />
-              <span className="hidden sm:inline">All Services</span>
-            </button>
-          )}
-
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ffd56b]/20 to-[#f59e0b]/10 border border-[#ffd56b]/30 flex items-center justify-center p-2">
-            <Image src={service.icon} alt={service.title} width={24} height={24} />
+    <div
+      className="h-full w-full flex flex-col bg-gradient-to-b from-[#f5efe6] via-[#eee4d5] to-[#e4d8c5] overflow-hidden relative"
+      style={{
+        height: viewportHeight ? `${viewportHeight}px` : '100%',
+        maxHeight: viewportHeight ? `${viewportHeight}px` : '100%',
+      }}
+    >
+      {/* Jyotix Header Bar - Full width with clean responsive container */}
+      <div className="w-full border-b border-[#e2d5c2] shrink-0 z-10 bg-[#f5efe6]/90 backdrop-blur-md">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="p-1.5 hover:bg-black/5 rounded-full transition text-gray-700 cursor-pointer"
+                title="Go back"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
+            <div className="relative">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full ring-2 ring-[#d4af37] overflow-hidden bg-amber-100 flex items-center justify-center shadow-xs">
+                <Image
+                  src="/png/reva_astrologer.jpg"
+                  alt="Jyotix Astrologer"
+                  width={44}
+                  height={44}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-gray-900 leading-tight">Jyotix</h2>
+              <p className="text-[11px] sm:text-xs text-gray-500 font-medium">Your AI Astrologer</p>
+            </div>
           </div>
 
-          <div>
-            <h1 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-              <span>{service.title}</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                Online Astrologer
-              </span>
-            </h1>
-            <p className="text-[11px] text-[#9ca3af]">
-              BPHS Classical Rules • Lahiri Whole-Sign House System
-            </p>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/subscription"
+              className="px-3.5 py-1.5 bg-[#16181f] hover:bg-black text-white text-xs font-semibold rounded-full shadow-sm transition"
+            >
+              Subscribe
+            </Link>
           </div>
         </div>
+      </div>
 
-        {/* Profile Switcher Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto max-w-full">
-          {savedProfiles.map((p) => {
-            const isSelected = p.id === activeKundliId;
-            return (
+      {/* Saved Profiles Pill Bar (if profiles exist) */}
+      {savedProfiles.length > 0 && (
+        <div className="w-full bg-[#ebe0d0] border-b border-[#ded2c0] shrink-0">
+          <div className="max-w-4xl mx-auto px-4 py-1.5 flex items-center gap-2 overflow-x-auto text-xs">
+            <span className="text-[10px] sm:text-[11px] text-gray-600 font-semibold uppercase">Profile:</span>
+            {savedProfiles.map((p) => (
               <button
                 key={p.id}
                 onClick={() => handleSelectProfile(p)}
-                className={`text-xs px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#ffd56b] text-black border-[#ffd56b] font-semibold'
-                    : 'bg-[#1b1f2a] text-[#e5e7eb] border-[#2f3646] hover:bg-[#252b3a]'
+                className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+                  p.id === activeKundliId
+                    ? 'bg-[#1b1c22] text-white shadow-xs'
+                    : 'bg-white/70 text-gray-700 hover:bg-white'
                 }`}
               >
-                <User className="w-3 h-3" />
-                <span>{p.label}</span>
+                {p.label}
               </button>
-            );
-          })}
+            ))}
+            <button
+              onClick={() => {
+                setActiveKundli(null);
+                setActiveKundliId(null);
+                setShowDialpad(true);
+              }}
+              className="text-xs text-[#8c6d32] hover:underline font-semibold flex items-center gap-1 ml-auto"
+            >
+              <Plus className="w-3.5 h-3.5" /> New
+            </button>
+          </div>
+        </div>
+      )}
 
-          <button
-            onClick={() => {
-              setActiveKundliId(null);
-              setActiveKundli(null);
-              setMessages((prev) => [
-                ...prev,
-                {
-                  id: `new-${Date.now()}`,
-                  sender: 'bot',
-                  text: `Naye vyakti ki kundli dekhne ke liye, kya aap unka Date of Birth, Time of Birth, aur Place of Birth bata sakte hain?\n(Jaise: 14 May 2000, 6:30 PM, Delhi)`,
-                  type: 'text',
-                  createdAt: new Date().toISOString(),
-                },
-              ]);
-            }}
-            className="text-xs px-2.5 py-1.5 rounded-xl bg-[#1b1f2a] text-[#ffd56b] border border-[#3b4356] hover:bg-[#262c3b] flex items-center gap-1 transition cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span className="whitespace-nowrap">Nayi Kundli</span>
-          </button>
+      {/* Chat Stream View - min-h-0 ensures only messages scroll and bottom bar stays fixed */}
+      <div
+        className="flex-1 min-h-0 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 w-full touch-pan-y overscroll-y-contain [scrollbar-width:thin] [scrollbar-color:#dfbe8c_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[#dfbe8c] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#c8a56f] [&::-webkit-scrollbar-track]:bg-transparent"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y',
+        }}
+      >
+        <div className="max-w-4xl mx-auto space-y-3.5">
+          <AnimatePresence>
+            {messages.map((m) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
+              >
+                {/* User Message Bubble matching Image 1 & 2 */}
+                {m.sender === 'user' ? (
+                  <div className="max-w-[85%] bg-[#dfbe8c] text-[#2d2214] font-medium px-4 py-2.5 rounded-2xl rounded-tr-xs shadow-xs text-xs sm:text-[13px] leading-relaxed flex items-center gap-2">
+                    <Pencil className="w-3 h-3 text-[#7d5f30] shrink-0" />
+                    <span>{m.text}</span>
+                    <span className="text-[10px] text-[#7d5f30] font-normal ml-1 shrink-0 flex items-center gap-0.5">
+                      {m.timestamp || '7:25 pm'}
+                      <Check className="w-2.5 h-2.5" />
+                    </span>
+                  </div>
+                ) : m.type === 'kundli_card' && m.kundliData ? (
+                  <div className="w-full">
+                    <KundliCard kundli={m.kundliData} />
+                  </div>
+                ) : (
+                  /* Bot Message Bubble matching Image 1 & 2 */
+                  <div className="max-w-[88%] space-y-1">
+                    <div className="bg-white text-[#2a2a2a] px-4 py-3 rounded-2xl rounded-tl-xs shadow-xs text-xs sm:text-[13px] leading-relaxed">
+                      <p className="whitespace-pre-line">{m.text}</p>
+                      <div className="text-right text-[10px] text-gray-400 mt-1 font-light">
+                        {m.timestamp || '7:25 pm'}
+                      </div>
+                    </div>
+
+                    {/* Verified Astrology Book & Shastra References */}
+                    {m.sources && m.sources.length > 0 && (
+                      <div className="w-full mt-1 px-3 py-2 bg-white/90 border border-[#e2d5c2] rounded-xl text-xs shadow-xs">
+                        <details className="group cursor-pointer">
+                          <summary className="text-[#8c6d32] font-semibold flex items-center justify-between hover:underline list-none select-none text-[11px]">
+                            <span className="flex items-center gap-1.5">
+                              <BookOpen className="w-3.5 h-3.5 text-[#d4af37]" />
+                              <span>
+                                {m.sources.some((s) => s.isCustomBook)
+                                  ? '📖 Astrology Book Reference'
+                                  : '📜 Classical Shastra Reference'}
+                              </span>
+                            </span>
+                            <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                          </summary>
+                          <div className="mt-2 space-y-1.5 text-gray-600 text-[11px]">
+                            {m.sources.map((src, idx) => (
+                              <div key={idx} className="p-2 bg-[#faf7f2] rounded-lg border border-[#e8ded0]">
+                                <div className="font-semibold text-gray-800 flex items-center justify-between">
+                                  <span>{src.source || src.title}</span>
+                                  {src.page && (
+                                    <span className="text-[10px] px-1.5 py-0.5 bg-[#dfbe8c]/30 text-[#6a4f20] font-bold rounded">
+                                      Page {src.page}
+                                    </span>
+                                  )}
+                                </div>
+                                {src.chapter && (
+                                  <div className="text-[10px] text-gray-500">Chapter: {src.chapter}</div>
+                                )}
+                                <div className="text-[10px] text-gray-600 line-clamp-2 mt-1 italic">
+                                  &quot;{src.snippet}&quot;
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      </div>
+                    )}
+
+                    {/* Reva Quick Suggestion Card with Chevron '>' matching Image 2 */}
+                    {m.quickReplies && m.quickReplies.length > 0 && (
+                      <div className="mt-2 bg-white rounded-2xl p-1 shadow-xs border border-[#e8ded0] divide-y divide-[#f2ebe0]">
+                        {m.quickReplies.map((qr) => (
+                          <button
+                            key={qr}
+                            onClick={() => {
+                              if (/detail\s+me(in)?\s+batao/i.test(qr)) {
+                                handleSendMessage('Detail mein batao', true);
+                              } else {
+                                handleSendMessage(qr);
+                              }
+                            }}
+                            disabled={isLoading || isTypingBubble}
+                            className="w-full px-3 py-2.5 text-left text-xs font-medium text-gray-800 hover:bg-[#faf7f2] transition flex items-center justify-between cursor-pointer first:rounded-t-xl last:rounded-b-xl disabled:opacity-50"
+                          >
+                            <span>{qr}</span>
+                            <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </motion.div>
+            ))}
+
+            {/* Animated Typing Indicator - Active during API call (isLoading) or bubble pacing (isTypingBubble) */}
+            {(isLoading || isTypingBubble) && (
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center gap-2.5 bg-white text-gray-700 px-4 py-2.5 rounded-2xl rounded-tl-xs shadow-xs text-xs max-w-[210px] border border-[#e8ded0]"
+              >
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-[#d4af37] rounded-full animate-bounce" />
+                  <span className="w-2 h-2 bg-[#d4af37] rounded-full animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-2 h-2 bg-[#d4af37] rounded-full animate-bounce [animation-delay:0.4s]" />
+                </div>
+                <span className="text-[11px] text-gray-500 font-medium">Jyotix is typing...</span>
+              </motion.div>
+            )}
+
+            {/* Interactive Dialpad Onboarding Sheet matching Image 1 */}
+            {showDialpad && (
+              <div className="pt-2 space-y-2">
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-[11px] font-medium text-gray-500">Birth Details Dialpad</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowDialpad(false)}
+                    className="text-[11px] text-[#8c6d32] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Or type details in chat</span>
+                    <ArrowUp className="w-3 h-3 rotate-45" />
+                  </button>
+                </div>
+                <RevaDialpadInput onComplete={handleDialpadSubmit} initialName={user?.displayName || ''} />
+              </div>
+            )}
+          </AnimatePresence>
+
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
-      {/* Messages Stream Container */}
-      <div className="flex-1 overflow-y-auto bg-[#0e1117] border border-[#222836] rounded-2xl p-3 sm:p-5 space-y-3 shadow-inner">
-        <AnimatePresence>
-          {messages.map((m) => (
-            <motion.div
-              key={m.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
-              className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
+      {/* Bottom Input Bar - Permanently pinned at bottom */}
+      <div
+        className="w-full px-3 py-2.5 sm:px-4 sm:py-3.5 bg-[#e4d8c5] border-t border-[#ded3c2] shrink-0 z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
+        style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 10px)' }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+            className="flex items-center gap-2 bg-white rounded-full px-3.5 sm:px-5 py-2 sm:py-2.5 shadow-md border border-[#e2d5c2]"
+          >
+            <input
+              type="text"
+              placeholder="Write your own question or birth details..."
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onFocus={() => {
+                setTimeout(() => {
+                  messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 250);
+              }}
+              disabled={isLoading || isTypingBubble}
+              className="flex-1 bg-transparent text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !inputText.trim()}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#1b1c20] hover:bg-black text-white flex items-center justify-center transition shadow-xs disabled:opacity-30 cursor-pointer shrink-0"
             >
-              {/* Optional One-time disclaimer right before the first astrology reading */}
-              {m.showDisclaimer && (
-                <div className="w-full text-center my-1">
-                  <span className="inline-block text-[11px] text-gray-500 bg-[#161a22] border border-[#282e3c] px-3 py-1 rounded-full">
-                    ⚠️ Ye guidance ke liye hai, final decision ke liye professional salah lein.
-                  </span>
-                </div>
-              )}
-
-              {/* Message Bubble or Kundli Card */}
-              {m.type === 'kundli_card' && m.kundliData ? (
-                <div className="max-w-full">
-                  <KundliCard kundli={m.kundliData} />
-                </div>
-              ) : (
-                <div
-                  className={`max-w-[88%] sm:max-w-[75%] px-4 py-2.5 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-md ${
-                    m.sender === 'user'
-                      ? 'bg-gradient-to-r from-[#ffd56b] to-[#f59e0b] text-black font-medium rounded-tr-xs ml-auto'
-                      : 'bg-[#181c25] border border-[#2b3140] text-gray-100 rounded-tl-xs whitespace-pre-line'
-                  }`}
-                >
-                  {m.text}
-                </div>
-              )}
-
-              {/* Collapsible Chart reasons in detail mode */}
-              {m.isDetail && m.chartFactors && m.chartFactors.length > 0 && (
-                <div className="w-full max-w-[88%] sm:max-w-[75%] mt-1 px-3 py-2 bg-[#141822] border border-[#2b3242] rounded-xl text-xs">
-                  <details className="group cursor-pointer">
-                    <summary className="text-[#ffd56b] font-medium flex items-center justify-between hover:underline list-none select-none py-0.5">
-                      <span className="flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#ffd56b]" />
-                        <span>Chart reasons (Grah & Bhaav sthiti)</span>
-                      </span>
-                      <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▼</span>
-                    </summary>
-                    <ul className="mt-2 pl-4 list-disc space-y-1 text-gray-300 text-[11px]">
-                      {m.chartFactors.map((factor, idx) => (
-                        <li key={idx}>{factor}</li>
-                      ))}
-                    </ul>
-                  </details>
-                </div>
-              )}
-
-              {/* Quick Replies chips below the last bubble */}
-              {m.quickReplies && m.quickReplies.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1.5 max-w-[88%] sm:max-w-[75%]">
-                  {m.quickReplies.map((qr) => (
-                    <button
-                      key={qr}
-                      onClick={() => {
-                        if (/detail\s+me(in)?\s+batao/i.test(qr)) {
-                          handleSendMessage('Detail mein batao', true);
-                        } else {
-                          handleSendMessage(qr);
-                        }
-                      }}
-                      disabled={isLoading || isTypingBubble}
-                      className="text-[11px] px-3 py-1 rounded-full bg-[#1b202a] text-[#ffd56b] border border-[#303746] hover:bg-[#262c3b] hover:border-[#ffd56b]/60 transition-all cursor-pointer shadow-sm disabled:opacity-50"
-                    >
-                      {qr}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {/* Typing indicator between bubbles / API wait */}
-        {(isLoading || isTypingBubble) && (
-          <motion.div
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-xs text-[#ffd56b] bg-[#181c25] border border-[#2b3140] w-fit px-3.5 py-2 rounded-2xl rounded-tl-xs shadow"
-          >
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ffd56b] animate-bounce [animation-delay:-0.3s]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ffd56b] animate-bounce [animation-delay:-0.15s]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-[#ffd56b] animate-bounce" />
-            </div>
-            <span className="text-[11px] text-gray-400 ml-1">Jyotix is typing...</span>
-          </motion.div>
-        )}
-
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Suggested initial questions */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-        <button
-          onClick={() => handleSendMessage('01-01-2000, 12:00 PM, Delhi')}
-          disabled={isLoading || isTypingBubble}
-          className="text-[11px] whitespace-nowrap px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
-        >
-          <FlaskConical className="w-3 h-3" />
-          <span>🧪 Test Demo Chart (01 Jan 2000)</span>
-        </button>
-
-        {service.quickQuestions.map((q) => (
-          <button
-            key={q}
-            onClick={() => handleSendMessage(q)}
-            disabled={isLoading || isTypingBubble}
-            className="text-[11px] whitespace-nowrap px-3 py-1.5 rounded-full bg-[#181c25] text-[#ffd56b] border border-[#2e3544] hover:bg-[#222735] transition cursor-pointer disabled:opacity-50"
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-
-      {/* Input Bar */}
-      <div className="bg-[#14171e] border border-[#262c38] rounded-2xl p-2 flex items-center gap-2 shadow-2xl">
-        <Input
-          type="text"
-          placeholder="Apna sawal likhein ya Janam details batayein (e.g. 14 May 2000, 6:30 PM, Delhi)..."
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={isLoading || isTypingBubble}
-          className="bg-[#0e1015] border-[#29303d] text-white focus:border-[#ffd56b] h-11 text-xs sm:text-sm"
-        />
-        <Button
-          onClick={() => handleSendMessage()}
-          disabled={isLoading || isTypingBubble || !inputText.trim()}
-          className="h-11 px-5 bg-gradient-to-r from-[#ffd56b] to-[#f59e0b] text-black font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-        >
-          <Send className="w-4 h-4" />
-          <span className="hidden sm:inline">Bhejein</span>
-        </Button>
+              <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
-
